@@ -1,5 +1,7 @@
 <div id="sidenav" class="sidenav nav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&#9776;</a>
+  <h1>{{ application }}</h1>
+  <h2>{{ version }}</h2>
   {% for m in modules %}
   <a href="{{ m.name }}.html">{{ m.name }}</a>
   {% endfor %}

@@ -14,7 +14,11 @@
         {% endif %}
 
         {% for function in module.functions %}
-        <h3>{{ function.name }}</h3>
+        <h3>
+          <a id="{{ function.name }}" href="#{{ function.name }}">
+            {{ function.name }}
+          </a>
+        </h3>
         {% if function.description != "none" %}
         <p>{{ function.description|safe }}</p>
         {% endif %}

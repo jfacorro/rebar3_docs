@@ -12,10 +12,16 @@ body {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
+    color: #ffffff;
+}
+
+#sidenav h1, #sidenav h2 {
+    padding: 0px 0px 0px 32px;
+    margin: 5px 0px;
 }
 
 #sidenav.nav {
-    width: 250px;
+    width: 300px;
 }
 
 #sidenav.no-nav {
@@ -55,7 +61,7 @@ body {
 }
 
 #main.nav {
-    margin-left: 250px;
+    margin-left: 300px;
 }
 
 #main.no-nav {
@@ -70,4 +76,9 @@ body {
 #content {
     margin: auto;
     width: 800px;
+}
+
+#content a {
+    text-decoration: none;
+    color: #000000;
 }
