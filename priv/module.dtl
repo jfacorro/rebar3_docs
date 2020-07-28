@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>{{ module }} — {{ application }} {{ version }}</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/main.js"></script>
+  </head>
+  <body>
+    <div id="sidenav" class="sidenav nav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&#9776;</a>
+      {% for name in modules %}
+      <a href="{{ name }}.html">{{ name }}</a>
+      {% endfor %}
+    </div>
+    <div id="main" class="nav">
+      <span id="show-nav-button" onclick="openNav()">&#9776;</span>
+      <div id="content">
+      </div>
+    </div>
+  </body>
+</html>
