@@ -49,7 +49,7 @@
 %%
 
 get_module_name(#xmlElement{attributes = Attrs}) ->
-  ?l2ea('find_attribute!'(name, Attrs)).
+  ?l2ea(find_attribute(name, Attrs)).
 
 get_module_description(#xmlElement{name = module} = M) ->
   get_description(M).
@@ -60,14 +60,31 @@ get_functions(#xmlElement{name = module} = M) ->
 get_functions(#xmlElement{name = functions, content = Content}) ->
   [ get_function(Function) || #xmlElement{name = function} = Function <- Content ].
 
--spec get_function(#xmlElement{}) -> docsh_internal:item().
+-spec get_function(#xmlElement{}) -> [tuple()].
 get_function(#xmlElement{attributes = Attrs} = Function) ->
-  [ {kind        , 'function'},
-    {name        , ?l2ea('find_attribute!'(name, Attrs))},
-    {arity       , ?l2i('find_attribute!'(arity, Attrs))},
-    {exported    , list_to_boolean('find_attribute!'(exported, Attrs))},
-    {description , get_function_description(Function)}
+  [ {kind        , 'function'}
+  , {name        , ?l2ea(find_attribute(name, Attrs))}
+  , {arity       , ?l2i(find_attribute(arity, Attrs))}
+  , {exported    , list_to_boolean(find_attribute(exported, Attrs))}
+  , {description , get_function_description(Function)}
+  , {args        , get_arguments(Function)}
   ].
+
+-spec get_arguments(#xmlElement{}) -> [tuple()].
+get_arguments(#xmlElement{name = function, content = Elements}) ->
+  case find_elements(args, Elements) of
+    [#xmlElement{content = Args}] ->
+      [get_argument(Arg) || Arg <- Args];
+    [] -> []
+  end.
+
+-spec get_argument(#xmlElement{}) -> [tuple()].
+get_argument(#xmlElement{name = arg, content = Arg}) ->
+  case find_elements(argName, Arg) of
+    [#xmlElement{content = Content}] ->
+      [{name, format_text(Content)}];
+    [] -> []
+  end.
 
 -spec get_types(#xmlElement{}) -> [docsh_internal:item()].
 get_types(#xmlElement{name = module} = M) ->
@@ -77,13 +94,13 @@ get_types(#xmlElement{name = typedecls, content = Content}) ->
 
 -spec get_type(#xmlElement{}) -> docsh_internal:item().
 get_type(#xmlElement{name = typedecl} = Type) ->
-  [ {kind        , 'type'},
-    {name        , get_type_name(Type)},
-    {arity       , get_type_arity(Type)},
+  [ {kind        , 'type'}
+  , {name        , get_type_name(Type)}
+  , {arity       , get_type_arity(Type)}
     %% TODO: really always true? anyway, we want the structure for functions and types
     %% to be the same
-    {exported    , true},
-    {description , get_type_description(Type)}
+  , {exported    , true}
+  , {description , get_type_description(Type)}
   ].
 
 get_function_description(#xmlElement{name = function} = Function) ->
@@ -97,7 +114,7 @@ get_type_name(#xmlElement{name = typedef} = TypeDef) ->
     TypeName -> TypeName
   end;
 get_type_name(#xmlElement{name = erlangName, attributes = Attrs}) ->
-  ?l2ea('find_attribute!'(name, Attrs)).
+  ?l2ea(find_attribute(name, Attrs)).
 
 get_type_arity(#xmlElement{name = typedecl} = Type) ->
   get_type_def(fun get_type_arity/1, Type);
@@ -155,11 +172,16 @@ get_type_def(ContinueFun, #xmlElement{name = typedecl} = Type) ->
 list_to_boolean("yes") -> true;
 list_to_boolean("no")  -> false.
 
-'find_attribute!'(Attr, Attrs) ->
+find_attribute(Attr, Attrs) ->
   case xmerl_lib:find_attribute(Attr, Attrs) of
-    false -> erlang:error({no_attribute, Attr, Attrs});
+    false -> {error, no_attr, Attr};
     {value, Value} -> Value
   end.
+
+find_elements(Name, Elements) ->
+  [ Element
+   || #xmlElement{name = N} = Element <- Elements, Name =:= N
+  ].
 
 %% Intended only for tracing.
 debug(_, _) -> ok.

@@ -12,11 +12,10 @@
         {% if module.description != "none" %}
         <p>{{ module.description }}</p>
         {% endif %}
-
         {% for function in module.functions %}
         <h3>
           <a id="{{ function.name }}" href="#{{ function.name }}">
-            {{ function.name }}
+            {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
           </a>
         </h3>
         {% if function.description != "none" %}
