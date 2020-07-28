@@ -58,7 +58,15 @@ get_module_description(#xmlElement{name = module} = M) ->
 get_functions(#xmlElement{name = module} = M) ->
   get_content(functions, [], fun get_functions/1, M);
 get_functions(#xmlElement{name = functions, content = Content}) ->
-  [ get_function(Function) || #xmlElement{name = function} = Function <- Content ].
+  Functions = [ get_function(Function)
+                || #xmlElement{name = function} = Function <- Content
+              ],
+  lists:sort(fun sort_by_name/2, Functions).
+
+-spec sort_by_name(any(), any()) -> boolean().
+sort_by_name(X, Y) ->
+  proplists:get_value(name, X) < proplists:get_value(name, Y).
+
 
 -spec get_function(#xmlElement{}) -> [tuple()].
 get_function(#xmlElement{attributes = Attrs} = Function) ->
@@ -68,6 +76,7 @@ get_function(#xmlElement{attributes = Attrs} = Function) ->
   , {exported    , list_to_boolean(find_attribute(exported, Attrs))}
   , {description , get_function_description(Function)}
   , {args        , get_arguments(Function)}
+  , {spec        , get_typespec(Function)}
   ].
 
 -spec get_arguments(#xmlElement{}) -> [tuple()].
@@ -85,6 +94,33 @@ get_argument(#xmlElement{name = arg, content = Arg}) ->
       [{name, format_text(Content)}];
     [] -> []
   end.
+
+-spec get_typespec(#xmlElement{}) -> [tuple()].
+get_typespec(#xmlElement{name = function, content = Elements}) ->
+  case find_elements([typespec, type], Elements) of
+    [#xmlElement{content = Types}] ->
+      [ {args, get_argtypes(Types)}
+      , {return, get_returntype(Types)}
+      ];
+    [] -> none
+  end.
+
+-spec get_argtypes(#xmlElement{}) -> [tuple()].
+get_argtypes(Types) ->
+  case find_elements([argtypes, type], Types) of
+    []       -> [];
+    ArgTypes -> [parse_type(T) || T <- ArgTypes]
+  end.
+
+-spec get_returntype(#xmlElement{}) -> [tuple()].
+get_returntype(Types) ->
+  case find_elements(type, Types) of
+    [Type] -> parse_type(Type);
+    []     -> []
+  end.
+
+parse_type(_Type) ->
+  [{name, "any()"}].
 
 -spec get_types(#xmlElement{}) -> [docsh_internal:item()].
 get_types(#xmlElement{name = module} = M) ->
@@ -178,6 +214,14 @@ find_attribute(Attr, Attrs) ->
     {value, Value} -> Value
   end.
 
+find_elements([], Elements) ->
+  Elements;
+find_elements([Name | Rest], Elements) ->
+  case find_elements(Name, Elements) of
+    [#xmlElement{content = E}] -> find_elements(Rest, E);
+    Found when Rest =:= [] -> Found;
+    _ -> []
+  end;
 find_elements(Name, Elements) ->
   [ Element
    || #xmlElement{name = N} = Element <- Elements, Name =:= N

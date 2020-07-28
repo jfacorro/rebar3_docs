@@ -40,7 +40,7 @@ do(State) ->
 
   Files = rebar_utils:find_files("src", ".erl$"),
   Modules1 = [parse_doc(Path) || Path <- Files],
-  Modules  = lists:sort(fun sort_modules/2, Modules1),
+  Modules  = lists:sort(fun sort_by_name/2, Modules1),
   Opts1 = Opts0#{modules => Modules},
   Sidenav = generate(sidenav_dtl, undefined, Opts1),
 
@@ -58,8 +58,8 @@ format_error(Reason) ->
 %% Internal functions
 %%==============================================================================
 
--spec sort_modules(any(), any()) -> boolean().
-sort_modules(X, Y) ->
+-spec sort_by_name(any(), any()) -> boolean().
+sort_by_name(X, Y) ->
   proplists:get_value(name, X) < proplists:get_value(name, Y).
 
 -spec parse_doc(string()) -> map().

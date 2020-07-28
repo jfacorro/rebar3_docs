@@ -82,3 +82,7 @@ body {
     text-decoration: none;
     color: #000000;
 }
+
+pre {
+    margin: 10px 0px;
+}
