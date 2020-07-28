@@ -9,6 +9,16 @@
     <div id="main" class="nav">
       <span id="show-nav-button" onclick="openNav()">&#9776;</span>
       <div id="content">
+        {% if module.description != "none" %}
+        <p>{{ module.description }}</p>
+        {% endif %}
+
+        {% for function in module.functions %}
+        <h3>{{ function.name }}</h3>
+        {% if function.description != "none" %}
+        <p>{{ function.description|safe }}</p>
+        {% endif %}
+        {% endfor %}
       </div>
     </div>
   </body>

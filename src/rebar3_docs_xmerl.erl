@@ -33,7 +33,8 @@
 '#root#'([#xmlElement{name = module} = Module], _, _, _) ->
   [ {name, get_module_name(Module)},
     {description, get_module_description(Module)},
-    {items, get_functions(Module) ++ get_types(Module)}
+    {functions, get_functions(Module)},
+    {types, get_types(Module)}
   ].
 
 -spec '#element#'(any(), any(), any(), any(), any()) -> any().
