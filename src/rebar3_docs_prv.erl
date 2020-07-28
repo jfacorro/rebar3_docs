@@ -29,18 +29,24 @@ init(State) ->
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
   OutDir = "doc",
-  Opts0 = #{ output_dir => OutDir
+  Opts0 = #{ application => "clojerl"
+           , output_dir => OutDir
            , version => "1.0.0"
            },
 
   ensure_output_dir(Opts0),
   setup_templates(Opts0),
 
-  Files = rebar_utils:find_files("src", ".erl$"),
-  Modules = [parse_doc(Path) || Path <- Files],
-  Opts = Opts0#{modules => [M || {M, _} <- lists:sort(Modules)]},
 
-  [generate(module_dtl, M, Info, Opts) || {M, Info} <- Modules],
+  Files = rebar_utils:find_files("src", ".erl$"),
+  Modules1 = [parse_doc(Path) || Path <- Files],
+  Modules  = lists:sort(fun sort_modules/2, Modules1),
+  Opts1 = Opts0#{modules => Modules},
+  Sidenav = generate(sidenav_dtl, undefined, Opts1),
+
+  Opts = Opts1#{sidenav => Sidenav},
+
+  [generate(module_dtl, M, Opts) || M <- Modules],
 
   {ok, State}.
 
@@ -52,11 +58,14 @@ format_error(Reason) ->
 %% Internal functions
 %%==============================================================================
 
--spec parse_doc(string()) -> {module(), map()}.
+-spec sort_modules(any(), any()) -> boolean().
+sort_modules(X, Y) ->
+  proplists:get_value(name, X) < proplists:get_value(name, Y).
+
+-spec parse_doc(string()) -> map().
 parse_doc(Path) ->
-  {M, Edoc} = edoc:get_doc(Path, [{preprocess, true}, {includes, ["include"]}]),
-  Internal  = xmerl:export_simple([Edoc], rebar3_docs_xmerl),
-  {M, Internal}.
+  {_M, Edoc} = edoc:get_doc(Path, [{preprocess, true}, {includes, ["include"]}]),
+  xmerl:export_simple([Edoc], rebar3_docs_xmerl).
 
 -spec ensure_output_dir(options()) -> ok.
 ensure_output_dir(#{output_dir := Dir}) ->
@@ -69,8 +78,14 @@ ensure_output_dir(#{output_dir := Dir}) ->
 -spec setup_templates(options()) -> ok.
 setup_templates(#{output_dir := OutDir}) ->
   PrivDir = code:priv_dir(rebar3_docs),
-  TemplatePath = filename:join(PrivDir, "module.dtl"),
-  {ok, module_dtl} = erlydtl:compile(TemplatePath, module_dtl),
+  Templates = ["module", "sidenav"],
+  [ begin
+      TemplatePath = filename:join(PrivDir, T ++ ".dtl"),
+      Module = list_to_atom(T ++ "_dtl"),
+      {ok, Module} = erlydtl:compile(TemplatePath, Module)
+    end
+    || T <- Templates
+  ],
   copy_files(PrivDir, OutDir, [["js", "main.js"], ["css", "main.css"]]).
 
 -spec copy_files(file:filename(), file:filename(), [[string()]]) -> ok.
@@ -80,17 +95,14 @@ copy_files(From, To, Paths) ->
   ],
   ok.
 
--spec generate(module(), module(), map(), options()) -> ok.
-generate(Template, Module, _Info, Opts) ->
-  #{ output_dir := Dir
-   , version := Version
-   , modules := Modules
-   } = Opts,
-  Variables = [ {application, "clojerl"}
-              , {module, Module}
-              , {version, Version}
-              , {modules, Modules}
-              ],
-  {ok, Content} = Template:render(Variables),
-  Filename = atom_to_list(Module) ++ ".html",
-  file:write_file(filename:join(Dir, Filename), Content).
+-spec generate(module(), map(), options()) -> ok.
+generate(module_dtl, Module, #{output_dir := Dir} = Opts) ->
+  Name          = proplists:get_value(name, Module),
+  Variables     = maps:to_list(Opts#{module => Module}),
+  {ok, Content} = module_dtl:render(Variables),
+  Filename      = atom_to_list(Name) ++ ".html",
+  file:write_file(filename:join(Dir, Filename), Content);
+generate(sidenav_dtl, _, Opts) ->
+  Variables     = maps:to_list(Opts),
+  {ok, Content} = sidenav_dtl:render(Variables),
+  Content.

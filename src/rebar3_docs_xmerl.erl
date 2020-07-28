@@ -31,9 +31,10 @@
 %% exported. It does not appear in the structure itself.
 -spec '#root#'(any(), any(), any(), any()) -> docsh_internal:t().
 '#root#'([#xmlElement{name = module} = Module], _, _, _) ->
-  #{name => get_module_name(Module),
-    description => get_module_description(Module),
-    items => get_functions(Module) ++ get_types(Module)}.
+  [ {name, get_module_name(Module)},
+    {description, get_module_description(Module)},
+    {items, get_functions(Module) ++ get_types(Module)}
+  ].
 
 -spec '#element#'(any(), any(), any(), any(), any()) -> any().
 '#element#'(_, _, _, _, E) -> E.
@@ -60,11 +61,12 @@ get_functions(#xmlElement{name = functions, content = Content}) ->
 
 -spec get_function(#xmlElement{}) -> docsh_internal:item().
 get_function(#xmlElement{attributes = Attrs} = Function) ->
-  #{kind        => 'function',
-    name        => ?l2ea('find_attribute!'(name, Attrs)),
-    arity       => ?l2i('find_attribute!'(arity, Attrs)),
-    exported    => list_to_boolean('find_attribute!'(exported, Attrs)),
-    description => get_function_description(Function)}.
+  [ {kind        , 'function'},
+    {name        , ?l2ea('find_attribute!'(name, Attrs))},
+    {arity       , ?l2i('find_attribute!'(arity, Attrs))},
+    {exported    , list_to_boolean('find_attribute!'(exported, Attrs))},
+    {description , get_function_description(Function)}
+  ].
 
 -spec get_types(#xmlElement{}) -> [docsh_internal:item()].
 get_types(#xmlElement{name = module} = M) ->
@@ -74,13 +76,14 @@ get_types(#xmlElement{name = typedecls, content = Content}) ->
 
 -spec get_type(#xmlElement{}) -> docsh_internal:item().
 get_type(#xmlElement{name = typedecl} = Type) ->
-  #{kind        => 'type',
-    name        => get_type_name(Type),
-    arity       => get_type_arity(Type),
+  [ {kind        , 'type'},
+    {name        , get_type_name(Type)},
+    {arity       , get_type_arity(Type)},
     %% TODO: really always true? anyway, we want the structure for functions and types
     %% to be the same
-    exported    => true,
-    description => get_type_description(Type)}.
+    {exported    , true},
+    {description , get_type_description(Type)}
+  ].
 
 get_function_description(#xmlElement{name = function} = Function) ->
   get_description(Function).
@@ -169,7 +172,7 @@ format_edoc(Content, Ctx) ->
   lists:map(fun
               ({br})        -> "\n";
               ({i, Inline}) -> [Inline]
-           end, end_block(format_content(Content, Ctx))).
+            end, end_block(format_content(Content, Ctx))).
 
 format_content(Content, Ctx) ->
   lists:flatten([ format_content_(C, Ctx) || C <- Content ]).
@@ -211,7 +214,7 @@ format_element(p, #xmlElement{}, Lines, _Ctx) ->
   end_block(lists:dropwhile(fun
                               ({br}) -> true;
                               (_) -> false
-                           end, Lines));
+                            end, Lines));
 format_element(pre, #xmlElement{}, Lines, _Ctx) ->
   end_block(Lines);
 format_element(ol, #xmlElement{} = E, ListItems, Ctx) ->
@@ -249,18 +252,18 @@ cleanup_text(Text, _Ctx) ->
   lists:flatmap(fun
                   ("\n") -> [{br}];
                   (T) ->
-                   case edoc_lib:is_space(T) of
-                     true -> [];
-                     false -> [{i, T}]
-                   end
-               end,
+                    case edoc_lib:is_space(T) of
+                      true -> [];
+                      false -> [{i, T}]
+                    end
+                end,
                 split(Text, "\s*(\n)\s*", [trim, {return, list}])).
 
 cleanup_preformatted_text(Text, _Ctx) ->
   lists:flatmap(fun
                   ("\n") -> [{br}];
                   (T) -> [{i, T}]
-               end,
+                end,
                 split(Text, "(\n)", [{return, list}])).
 
 split(Text, Pattern, Opts) ->
@@ -270,7 +273,7 @@ is_preformatted(Parents) ->
   lists:any(fun
               ({pre, _}) -> true;
               (_) -> false
-           end, Parents).
+            end, Parents).
 
 prepend(Prefix, Doc) -> prepend(Prefix, lists:reverse(Doc), []).
 
