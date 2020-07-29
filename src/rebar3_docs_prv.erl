@@ -2,7 +2,7 @@
 
 -export([init/1, do/1, format_error/1]).
 
--define(PROVIDER, erl_doc).
+-define(PROVIDER, docs).
 -define(DEPS, [app_discovery]).
 
 
@@ -18,7 +18,7 @@ init(State) ->
             , {module, ?MODULE}
             , {bare, true}
             , {deps, ?DEPS}
-            , {example, "rebar3 erl_doc"}
+            , {example, "rebar3 docs"}
             , {opts, []}
             , {short_desc, "Generates nice looking documentation"}
             , {desc, "Generates nice looking documentation"}
