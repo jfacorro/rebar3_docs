@@ -9,11 +9,12 @@
     <div id="main" class="nav">
       <span id="show-nav-button" class="nav" onclick="openNav()">&#9776;</span>
       <div id="content">
-        <h1>{{ module.name }}</h1>
-        {% if module.description != "none" %}
-        <p>{{ module.description }}</p>
-        {% endif %}
-
+        <section id="top">
+          <h1>{{ module.name }}</h1>
+          {% if module.description != "none" %}
+          <p>{{ module.description }}</p>
+          {% endif %}
+        </section>
         {% if module.functions|length > 0 or module.types|length > 0 %}
         <!------- Summary ------->
         <section id="summary">
@@ -25,7 +26,9 @@
           {% for type in module.types %}
           <ul>
             <li>
-              <a href="#{{ type.name }}-{{ type.arity }}">{{ type.name }}()</a>
+              <a href="#{{ type.name }}/{{ type.arity }}">
+                <span class="signature">{{ type.name }}()</span>
+              </a>
             </li>
           </ul>
           {% endfor %}
@@ -37,8 +40,10 @@
           {% for function in module.functions %}
           <ul>
             <li>
-              <a href="#{{ function.name }}-{{ function.arity }}">
-                {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
+              <a href="#{{ function.name }}/{{ function.arity }}">
+                <span class="signature">
+                  {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
+                </span>
               </a>
             </li>
           </ul>
@@ -52,14 +57,14 @@
         <section id="types">
           <h1>Types</h1>
           {% for type in module.types %}
-          <h3>
-            <a id="{{ type.name }}-{{ type.arity }}" href="#{{ type.name }}-{{ type.arity }}">
-              {{ type.name }}()
+          <h2 class="type">
+            <a id="{{ type.name }}/{{ type.arity }}" href="#{{ type.name }}/{{ type.arity }}">
+              <span class="signature"> {{ type.name }}()</span>
             </a>
             {% if type.description != "none" %}
-            <pre>{{ type.description|safe }}</pre>
+            <div class="definition">{{ type.description|safe }}</div>
             {% endif %}
-          </h3>
+          </h2>
           {% endfor %}
         </section>
         {% endif %}
@@ -69,14 +74,16 @@
         <section id="functions">
           <h1>Functions</h1>
           {% for function in module.functions %}
-          <h3>
-            <a id="{{ function.name }}-{{ function.arity }}" href="#{{ function.name }}-{{ function.arity }}">
-              {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
+          <h2 class="function">
+            <a id="{{ function.name }}/{{ function.arity }}" href="#{{ function.name }}/{{ function.arity }}">
+              <span class="signature">
+                {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
+              </span>
             </a>
             {% if function.spec != "none" %}
-            <pre>{{ function.spec }}</pre>
+            <div class="definition">{{ function.spec }}</div>
             {% endif %}
-          </h3>
+          </h2>
           {% if function.description != "none" %}
           <p>{{ function.description|safe }}</p>
           {% endif %}

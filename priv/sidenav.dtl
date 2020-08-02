@@ -1,5 +1,5 @@
 <div id="sidenav" class="sidenav nav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&#9776;</a>
+  <span id="hide-nav-button" class="closebtn" onclick="closeNav()">&#9776;</span>
   <h1>{{ application }}</h1>
   <h2>{{ version }}</h2>
   {% for m in modules %}

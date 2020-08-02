@@ -1,5 +1,6 @@
 body {
-    font-family: "Lato", sans-serif;
+    font-family: Lato, sans-serif;
+    margin: 0px;
 }
 
 #sidenav {
@@ -8,7 +9,7 @@ body {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #111;
+    background-color: #333;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -41,15 +42,18 @@ body {
     color: #f1f1f1;
 }
 
-#sidenav .closebtn {
+#sidenav #hide-nav-button {
     position: absolute;
-    top: 0;
+    top: 0px;
     right: 5px;
     font-size: 25px;
-    margin-left: 50px;
+    cursor: pointer;
 }
 
 #show-nav-button {
+    position: absolute;
+    top: 0px;
+    left: 5px;
     font-size: 25px;
     cursor: pointer;
     transition: visibility 0s, opacity 0.5s linear;
@@ -94,6 +98,36 @@ body {
     color: #000000;
 }
 
-pre {
-    margin: 10px 0px;
+#content h1 {
+    font-size: 2.0em;
+    margin: 40px 0px 20px 0px;
+}
+
+#summary ul {
+    padding: 0px;
+}
+
+#summary ul li {
+    list-style-type: none;
+}
+
+.signature, .definition {
+    margin: 5px 0px;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+.signature {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.definition {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+#functions h2, #types h2 {
+    background: #EEE;
+    padding: 10px;
+    border-left: #C33F35 3px solid;
 }
