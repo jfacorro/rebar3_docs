@@ -5,6 +5,7 @@
 -define(PROVIDER, docs).
 -define(DEPS, [app_discovery]).
 
+-define(INCLUDE, "include").
 
 -type options() :: #{output_dir := file:filename()}.
 
@@ -64,8 +65,46 @@ sort_by_name(X, Y) ->
 
 -spec parse_doc(string()) -> map().
 parse_doc(Path) ->
-  {_M, Edoc} = edoc:get_doc(Path, [{preprocess, true}, {includes, ["include"]}]),
-  xmerl:export_simple([Edoc], rebar3_docs_xmerl).
+  Opts = [{preprocess, true}, {includes, [?INCLUDE]}],
+  {_M, Edoc} = edoc:get_doc(Path, Opts),
+  Source = edoc:read_source(Path, Opts),
+  Docs = xmerl:export_simple([Edoc], rebar3_docs_xmerl),
+  add_function_specs(Docs, Source).
+
+-spec add_function_specs([any()], [any()]) -> [any()].
+add_function_specs(Docs, Source) ->
+  FoldFun = fun(X, Acc) ->
+                case erl_syntax:type(X) of
+                  attribute ->
+                    case erl_syntax_lib:analyze_attribute(X) of
+                      {spec, {spec, {{F, A}, _}}} ->
+                        Data = pretty_print_spec(X),
+                        Acc#{{F, A} => Data};
+                      _  -> Acc
+                    end;
+                  _ -> Acc
+                end
+            end,
+  Source1 = lists:foldl(FoldFun, #{}, Source),
+
+  Functions0 = proplists:get_value(functions, Docs, []),
+
+  F = fun(Function) ->
+          Name = proplists:get_value(name, Function),
+          Arity = proplists:get_value(arity, Function),
+          Spec = maps:get({Name, Arity}, Source1, none),
+          [{spec, Spec} | Function]
+      end,
+
+  [{functions, lists:map(F, Functions0)} | Docs].
+
+-spec pretty_print_spec(any()) -> string().
+pretty_print_spec(Tree) ->
+  try
+    erl_prettypr:format(Tree)
+  catch _:_:_ ->
+      ""
+  end.
 
 -spec ensure_output_dir(options()) -> ok.
 ensure_output_dir(#{output_dir := Dir}) ->

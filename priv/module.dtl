@@ -19,7 +19,7 @@
             {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
           </a>
           {% if function.spec != "none" %}
-          <pre>{{ function.name }}({% for type in function.spec.args %}{{ type.name }}{% if not forloop.last %}, {% endif %}{% endfor %}) -> {{ function.spec.return.name }}.</pre>
+          <pre>{{ function.spec }}</pre>
           {% endif %}
         </h3>
         {% if function.description != "none" %}
