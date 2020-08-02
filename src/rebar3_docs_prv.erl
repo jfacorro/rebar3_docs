@@ -20,7 +20,7 @@ init(State) ->
             , {bare, true}
             , {deps, ?DEPS}
             , {example, "rebar3 docs"}
-            , {opts, []}
+            , {opts, [{out, $o, "out", "docs", "Output directory"}]}
             , {short_desc, "Generates nice looking documentation"}
             , {desc, "Generates nice looking documentation"}
             ],
@@ -29,10 +29,14 @@ init(State) ->
 
 -spec do(rebar_state:t()) -> {ok, rebar_state:t()} | {error, string()}.
 do(State) ->
-  OutDir = "doc",
-  Opts0 = #{ application => "clojerl"
-           , output_dir => OutDir
-           , version => "1.0.0"
+  [AppInfo | _] = rebar_state:project_apps(State),
+  AppName = rebar_utils:to_list(rebar_app_info:name(AppInfo)),
+  OriginalVsn = rebar_app_info:original_vsn(AppInfo),
+  AppVersion = rebar_utils:vcs_vsn(AppInfo, OriginalVsn, State),
+
+  Opts0 = #{ application => AppName
+           , output_dir => output_dir(State)
+           , version => AppVersion
            },
 
   ensure_output_dir(Opts0),
@@ -58,6 +62,11 @@ format_error(Reason) ->
 %%==============================================================================
 %% Internal functions
 %%==============================================================================
+
+-spec output_dir(rebar_state:t()) -> string().
+output_dir(State) ->
+  {Args, _} = rebar_state:command_parsed_args(State),
+  proplists:get_value(out, Args, "docs").
 
 -spec sort_by_name(any(), any()) -> boolean().
 sort_by_name(X, Y) ->
