@@ -24,13 +24,13 @@
           <!------- Types summary ------->
           <h2>Types</h2>
           <ul>
-          {% for type in module.types %}
+            {% for type in module.types %}
             <li>
               <a href="#{{ type.name }}/{{ type.arity }}">
                 <span class="signature">{{ type.name }}()</span>
               </a>
             </li>
-          {% endfor %}
+            {% endfor %}
           </ul>
           {% endif %}
 
@@ -38,7 +38,7 @@
           <!------- Functions summary ------->
           <h2>Functions</h2>
           <ul>
-          {% for function in module.functions %}
+            {% for function in module.functions %}
             <li>
               <a href="#{{ function.name }}/{{ function.arity }}">
                 <span class="signature">
@@ -49,7 +49,7 @@
               <div class="synopsis">{{ function.synopsis|safe }}</div>
               {% endif %}
             </li>
-          {% endfor %}
+            {% endfor %}
           </ul>
           {% endif %}
         </section>
@@ -64,6 +64,9 @@
             <a id="{{ type.name }}/{{ type.arity }}" href="#{{ type.name }}/{{ type.arity }}">
               <span class="signature"> {{ type.name }}()</span>
             </a>
+            {% if type.description != "none" %}
+            <div class="definition">{{ type.description|safe }}</div>
+            {% endif %}
           </h2>
           {% endfor %}
         </section>
