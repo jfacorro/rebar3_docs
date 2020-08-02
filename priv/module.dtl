@@ -45,6 +45,9 @@
                   {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
                 </span>
               </a>
+              {% if function.synopsis != "none" %}
+              <div class="synopsis">{{ function.synopsis|safe }}</div>
+              {% endif %}
             </li>
           </ul>
           {% endfor %}
@@ -61,9 +64,6 @@
             <a id="{{ type.name }}/{{ type.arity }}" href="#{{ type.name }}/{{ type.arity }}">
               <span class="signature"> {{ type.name }}()</span>
             </a>
-            {% if type.description != "none" %}
-            <div class="definition">{{ type.description|safe }}</div>
-            {% endif %}
           </h2>
           {% endfor %}
         </section>

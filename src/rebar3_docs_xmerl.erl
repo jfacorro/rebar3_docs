@@ -35,10 +35,10 @@
 %% exported. It does not appear in the structure itself.
 -spec '#root#'(any(), any(), any(), any()) -> docsh_internal:t().
 '#root#'([#xmlElement{name = module} = Module], _, _, _) ->
-  [ {name, get_module_name(Module)},
-    {description, get_module_description(Module)},
-    {functions, get_functions(Module)},
-    {types, get_types(Module)}
+  [ {name, name(Module)},
+    {description, description(Module)},
+    {functions, functions(Module)},
+    {types, types(Module)}
   ].
 
 -spec '#element#'(any(), any(), any(), any(), any()) -> any().
@@ -52,17 +52,14 @@
 %%' xmerl:simple_export/2 helpers
 %%
 
-get_module_name(#xmlElement{attributes = Attrs}) ->
+name(#xmlElement{attributes = Attrs}) ->
   ?l2ea(find_attribute(name, Attrs)).
 
-get_module_description(#xmlElement{name = module} = M) ->
-  get_description(M).
-
--spec get_functions(#xmlElement{}) -> [docsh_internal:item()].
-get_functions(#xmlElement{name = module} = M) ->
-  get_content(functions, [], fun get_functions/1, M);
-get_functions(#xmlElement{name = functions, content = Content}) ->
-  Functions = [ get_function(Function)
+-spec functions(#xmlElement{}) -> [docsh_internal:item()].
+functions(#xmlElement{name = module} = M) ->
+  content(functions, [], fun functions/1, M);
+functions(#xmlElement{name = functions, content = Content}) ->
+  Functions = [ function(Function)
                 || #xmlElement{name = function} = Function <- Content
               ],
   lists:sort(fun sort_by_name_arity/2, Functions).
@@ -78,52 +75,53 @@ sort_by_name_arity(X, Y) ->
     true -> false
   end.
 
--spec get_function(#xmlElement{}) -> [tuple()].
-get_function(#xmlElement{attributes = Attrs} = Function) ->
+-spec function(#xmlElement{}) -> [tuple()].
+function(#xmlElement{attributes = Attrs} = Function) ->
   [ {kind        , 'function'}
-  , {name        , ?l2ea(find_attribute(name, Attrs))}
+  , {name        , name(Function)}
   , {arity       , ?l2i(find_attribute(arity, Attrs))}
   , {exported    , list_to_boolean(find_attribute(exported, Attrs))}
-  , {description , get_function_description(Function)}
-  , {args        , get_arguments(Function)}
-  , {spec        , get_typespec(Function)}
+  , {synopsis    , synopsis(Function)}
+  , {description , description(Function)}
+  , {args        , arguments(Function)}
+  , {spec        , typespec(Function)}
   ].
 
--spec get_arguments(#xmlElement{}) -> [tuple()].
-get_arguments(#xmlElement{name = function, content = Elements}) ->
+-spec arguments(#xmlElement{}) -> [tuple()].
+arguments(#xmlElement{name = function, content = Elements}) ->
   case find_elements(args, Elements) of
     [#xmlElement{content = Args}] ->
-      [get_argument(Arg) || Arg <- Args];
+      [argument(Arg) || Arg <- Args];
     [] -> []
   end.
 
--spec get_argument(#xmlElement{}) -> [tuple()].
-get_argument(#xmlElement{name = arg, content = Arg}) ->
+-spec argument(#xmlElement{}) -> [tuple()].
+argument(#xmlElement{name = arg, content = Arg}) ->
   case find_elements(argName, Arg) of
     [#xmlElement{content = Content}] ->
       [{name, format_text(Content)}];
     [] -> []
   end.
 
--spec get_typespec(#xmlElement{}) -> [tuple()].
-get_typespec(#xmlElement{name = function, content = Elements}) ->
+-spec typespec(#xmlElement{}) -> [tuple()].
+typespec(#xmlElement{name = function, content = Elements}) ->
   case find_elements([typespec, type], Elements) of
     [#xmlElement{content = Types}] ->
-      [ {args, get_argtypes(Types)}
-      , {return, get_returntype(Types)}
+      [ {args, argument_types(Types)}
+      , {return, return_type(Types)}
       ];
     [] -> none
   end.
 
--spec get_argtypes(#xmlElement{}) -> [tuple()].
-get_argtypes(Types) ->
+-spec argument_types(#xmlElement{}) -> [tuple()].
+argument_types(Types) ->
   case find_elements([argtypes, type], Types) of
     []       -> [];
     ArgTypes -> [parse_type(T) || T <- ArgTypes]
   end.
 
--spec get_returntype(#xmlElement{}) -> [tuple()].
-get_returntype(Types) ->
+-spec return_type(#xmlElement{}) -> [tuple()].
+return_type(Types) ->
   case find_elements(type, Types) of
     [Type] -> parse_type(Type);
     []     -> []
@@ -132,62 +130,66 @@ get_returntype(Types) ->
 parse_type(_Type) ->
   [{name, "any()"}].
 
--spec get_types(#xmlElement{}) -> [docsh_internal:item()].
-get_types(#xmlElement{name = module} = M) ->
-  get_content(typedecls, [], fun get_types/1, M);
-get_types(#xmlElement{name = typedecls, content = Content}) ->
-  Types = [ get_type(Type) || #xmlElement{name = typedecl} = Type <- Content ],
+-spec types(#xmlElement{}) -> [docsh_internal:item()].
+types(#xmlElement{name = module} = M) ->
+  content(typedecls, [], fun types/1, M);
+types(#xmlElement{name = typedecls, content = Content}) ->
+  Types = [ type(Type) || #xmlElement{name = typedecl} = Type <- Content ],
   lists:sort(fun sort_by_name_arity/2, Types).
 
--spec get_type(#xmlElement{}) -> docsh_internal:item().
-get_type(#xmlElement{name = typedecl} = Type) ->
+-spec type(#xmlElement{}) -> docsh_internal:item().
+type(#xmlElement{name = typedecl} = Type) ->
   [ {kind        , 'type'}
-  , {name        , get_type_name(Type)}
-  , {arity       , get_type_arity(Type)}
+  , {name        , type_name(Type)}
+  , {arity       , type_arity(Type)}
   ].
 
-get_function_description(#xmlElement{name = function} = Function) ->
-  get_description(Function).
-
-get_type_name(#xmlElement{name = typedecl} = Type) ->
-  get_type_def(fun get_type_name/1, Type);
-get_type_name(#xmlElement{name = typedef} = TypeDef) ->
-  case get_content(erlangName, {error, no_erlang_name}, fun get_type_name/1, TypeDef) of
+type_name(#xmlElement{name = typedecl} = Type) ->
+  type_def(fun type_name/1, Type);
+type_name(#xmlElement{name = typedef} = TypeDef) ->
+  case content(erlangName, {error, no_erlang_name}, fun type_name/1, TypeDef) of
     {error, no_erlang_name} -> erlang:error({not_found, erlangName});
     TypeName -> TypeName
   end;
-get_type_name(#xmlElement{name = erlangName, attributes = Attrs}) ->
+type_name(#xmlElement{name = erlangName, attributes = Attrs}) ->
   ?l2ea(find_attribute(name, Attrs)).
 
-get_type_arity(#xmlElement{name = typedecl} = Type) ->
-  get_type_def(fun get_type_arity/1, Type);
-get_type_arity(#xmlElement{name = typedef} = TypeDef) ->
-  case get_content(argtypes, {error, no_argtypes}, fun get_type_arity/1, TypeDef) of
+type_arity(#xmlElement{name = typedecl} = Type) ->
+  type_def(fun type_arity/1, Type);
+type_arity(#xmlElement{name = typedef} = TypeDef) ->
+  case content(argtypes, {error, no_argtypes}, fun type_arity/1, TypeDef) of
     {error, no_argtypes} -> erlang:error({not_found, argtypes});
     TypeArity -> TypeArity
   end;
-get_type_arity(#xmlElement{name = argtypes, content = Content}) ->
+type_arity(#xmlElement{name = argtypes, content = Content}) ->
   count_args(Content).
 
 count_args(Args) ->
   length([ Arg || #xmlElement{name = type} = Arg <- Args ]).
 
-get_content(Name, Default, ContinueFun, #xmlElement{content = Content}) ->
+content(Name, Default, ContinueFun, #xmlElement{content = Content}) ->
   case lists:keyfind(Name, #xmlElement.name, Content) of
     false -> Default;
     #xmlElement{} = Found -> ContinueFun(Found)
   end.
 
-get_description(#xmlElement{} = Element) ->
-  get_content(description, none, fun get_full_description/1, Element).
+synopsis(#xmlElement{} = Element) ->
+  content(description, none, fun brief_description/1, Element).
 
-get_full_description(#xmlElement{name = description} = D) ->
-  get_content(fullDescription, none, fun get_full_description/1, D);
-get_full_description(#xmlElement{name = fullDescription, content = Content}) ->
-  %% See xmerl.hrl for the definition of #xmlElement.content:
-  %%   content = [#xmlElement()|#xmlText()|#xmlPI()|#xmlComment()|#xmlDecl()]
+brief_description(#xmlElement{name = description} = D) ->
+  content(briefDescription, none, fun brief_description/1, D);
+brief_description(#xmlElement{name = briefDescription, content = Content}) ->
   format_text(Content).
 
+description(#xmlElement{} = Element) ->
+  content(description, none, fun full_description/1, Element).
+
+full_description(#xmlElement{name = description} = D) ->
+  content(fullDescription, none, fun full_description/1, D);
+full_description(#xmlElement{name = fullDescription, content = Content}) ->
+  format_text(Content).
+
+%% XmlElements :: [#xmlElement()|#xmlText()|#xmlPI()|#xmlComment()|#xmlDecl()]
 format_text(XmlElements) when is_list(XmlElements)->
   [format_text(X) || X <- XmlElements];
 format_text(#xmlElement{name = Name, content = Content}) ->
@@ -202,8 +204,8 @@ format_text(#xmlComment{}) ->
 format_text(#xmlDecl{}) ->
   [].
 
-get_type_def(ContinueFun, #xmlElement{name = typedecl} = Type) ->
-  case get_content(typedef, {error, no_typedef}, ContinueFun, Type) of
+type_def(ContinueFun, #xmlElement{name = typedecl} = Type) ->
+  case content(typedef, {error, no_typedef}, ContinueFun, Type) of
     {error, no_typedef} -> erlang:error({not_found, typedef, Type});
     ContinuationResult -> ContinuationResult
   end.
