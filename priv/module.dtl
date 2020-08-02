@@ -14,58 +14,75 @@
         <p>{{ module.description }}</p>
         {% endif %}
 
+        {% if module.functions|length > 0 or module.types|length > 0 %}
         <!------- Summary ------->
-        <h1>Summary</h1>
-        <!------- Types summary ------->
-        <h2>Types</h2>
-        {% for type in module.types %}
-        <ul>
-          <li>
-            <a href="#{{ type.name }}-{{ type.arity }}">{{ type.name }}()</a>
-          </li>
-        </ul>
-        {% endfor %}
+        <section id="summary">
+          <h1>Summary</h1>
 
-        <!------- Functions summary ------->
-        <h2>Functions</h2>
-        {% for function in module.functions %}
-        <ul>
-          <li>
-            <a href="#{{ function.name }}-{{ function.arity }}">
+          {% if module.types|length > 0 %}
+          <!------- Types summary ------->
+          <h2>Types</h2>
+          {% for type in module.types %}
+          <ul>
+            <li>
+              <a href="#{{ type.name }}-{{ type.arity }}">{{ type.name }}()</a>
+            </li>
+          </ul>
+          {% endfor %}
+          {% endif %}
+
+          {% if module.functions|length > 0 %}
+          <!------- Functions summary ------->
+          <h2>Functions</h2>
+          {% for function in module.functions %}
+          <ul>
+            <li>
+              <a href="#{{ function.name }}-{{ function.arity }}">
+                {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
+              </a>
+            </li>
+          </ul>
+          {% endfor %}
+          {% endif %}
+        </section>
+        {% endif %}
+
+        {% if module.types|length > 0 %}
+        <!------- Types details ------->
+        <section id="types">
+          <h1>Types</h1>
+          {% for type in module.types %}
+          <h3>
+            <a id="{{ type.name }}-{{ type.arity }}" href="#{{ type.name }}-{{ type.arity }}">
+              {{ type.name }}()
+            </a>
+            {% if type.description != "none" %}
+            <pre>{{ type.description|safe }}</pre>
+            {% endif %}
+          </h3>
+          {% endfor %}
+        </section>
+        {% endif %}
+
+        {% if module.functions|length > 0 %}
+        <!------- Functions details ------->
+        <section id="functions">
+          <h1>Functions</h1>
+          {% for function in module.functions %}
+          <h3>
+            <a id="{{ function.name }}-{{ function.arity }}" href="#{{ function.name }}-{{ function.arity }}">
               {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
             </a>
-          </li>
-        </ul>
-        {% endfor %}
-
-        <!------- Types details ------->
-        <h1>Types</h1>
-        {% for type in module.types %}
-        <h3>
-          <a id="{{ type.name }}-{{ type.arity }}" href="#{{ type.name }}-{{ type.arity }}">
-            {{ type.name }}()
-          </a>
-          {% if type.description != "none" %}
-          <pre>{{ type.description|safe }}</pre>
+            {% if function.spec != "none" %}
+            <pre>{{ function.spec }}</pre>
+            {% endif %}
+          </h3>
+          {% if function.description != "none" %}
+          <p>{{ function.description|safe }}</p>
           {% endif %}
-        </h3>
-        {% endfor %}
-
-        <!------- Functions details ------->
-        <h1>Functions</h1>
-        {% for function in module.functions %}
-        <h3>
-          <a id="{{ function.name }}-{{ function.arity }}" href="#{{ function.name }}-{{ function.arity }}">
-            {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
-          </a>
-          {% if function.spec != "none" %}
-          <pre>{{ function.spec }}</pre>
-          {% endif %}
-        </h3>
-        {% if function.description != "none" %}
-        <p>{{ function.description|safe }}</p>
+          {% endfor %}
+        </section>
         {% endif %}
-        {% endfor %}
       </div>
     </div>
   </body>
