@@ -52,6 +52,17 @@ body {
 #show-nav-button {
     font-size: 25px;
     cursor: pointer;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+
+#show-nav-button.nav {
+    visibility: hidden;
+    opacity: 0;
+}
+
+#show-nav-button.no-nav {
+    visibility: visible;
+    opacity: 1;
 }
 
 #main {

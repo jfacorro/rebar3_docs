@@ -7,6 +7,8 @@ function closeNav() {
 }
 
 function changeClass(className) {
-  document.getElementById("sidenav").className = className;
-  document.getElementById("main").className = className;
+  let ids = ["sidenav", "main", "show-nav-button"];
+  for(id of ids) {
+    document.getElementById(id).className = className;
+  }
 }
