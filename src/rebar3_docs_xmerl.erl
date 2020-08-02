@@ -2,17 +2,23 @@
 
 %% xmerl:simple_export/2 API
 
--export(['#root#'/4,
-         '#element#'/5,
-         '#text#'/1,
-         '#xml-inheritance#'/0]).
+-export([ '#root#'/4
+        , '#element#'/5
+        , '#text#'/1
+        , '#xml-inheritance#'/0
+        ]).
 
 -export_type([xml_element_content/0]).
 
 -include_lib("xmerl/include/xmerl.hrl").
 
 %% @type xml_element_content(). `#xmlElement.content' as defined by `xmerl.hrl'.
--type xml_element_content() :: [#xmlElement{} | #xmlText{} | #xmlPI{} | #xmlComment{} | #xmlDecl{}].
+-type xml_element_content() :: [ #xmlElement{}
+                               | #xmlText{}
+                               | #xmlPI{}
+                               | #xmlComment{}
+                               | #xmlDecl{}
+                               ].
 
 -define(il2b(IOList), iolist_to_binary(IOList)).
 -define(l2i(L), list_to_integer(L)).
@@ -59,11 +65,18 @@ get_functions(#xmlElement{name = functions, content = Content}) ->
   Functions = [ get_function(Function)
                 || #xmlElement{name = function} = Function <- Content
               ],
-  lists:sort(fun sort_by_name/2, Functions).
+  lists:sort(fun sort_by_name_arity/2, Functions).
 
--spec sort_by_name(any(), any()) -> boolean().
-sort_by_name(X, Y) ->
-  proplists:get_value(name, X) < proplists:get_value(name, Y).
+-spec sort_by_name_arity(any(), any()) -> boolean().
+sort_by_name_arity(X, Y) ->
+  NameX = proplists:get_value(name, X),
+  NameY = proplists:get_value(name, Y),
+  if
+    NameX < NameY -> true;
+    NameX =:= NameY ->
+      proplists:get_value(arity, X) < proplists:get_value(arity, Y);
+    true -> false
+  end.
 
 -spec get_function(#xmlElement{}) -> [tuple()].
 get_function(#xmlElement{attributes = Attrs} = Function) ->
@@ -123,17 +136,14 @@ parse_type(_Type) ->
 get_types(#xmlElement{name = module} = M) ->
   get_content(typedecls, [], fun get_types/1, M);
 get_types(#xmlElement{name = typedecls, content = Content}) ->
-  [ get_type(Type) || #xmlElement{name = typedecl} = Type <- Content ].
+  Types = [ get_type(Type) || #xmlElement{name = typedecl} = Type <- Content ],
+  lists:sort(fun sort_by_name_arity/2, Types).
 
 -spec get_type(#xmlElement{}) -> docsh_internal:item().
 get_type(#xmlElement{name = typedecl} = Type) ->
   [ {kind        , 'type'}
   , {name        , get_type_name(Type)}
   , {arity       , get_type_arity(Type)}
-    %% TODO: really always true? anyway, we want the structure for functions and types
-    %% to be the same
-  , {exported    , true}
-  , {description , get_type_description(Type)}
   ].
 
 get_function_description(#xmlElement{name = function} = Function) ->
@@ -161,9 +171,6 @@ get_type_arity(#xmlElement{name = argtypes, content = Content}) ->
 
 count_args(Args) ->
   length([ Arg || #xmlElement{name = type} = Arg <- Args ]).
-
-get_type_description(#xmlElement{name = typedecl} = Type) ->
-  get_description(Type).
 
 get_content(Name, Default, ContinueFun, #xmlElement{content = Content}) ->
   case lists:keyfind(Name, #xmlElement.name, Content) of

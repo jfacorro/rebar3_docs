@@ -69,42 +69,54 @@ parse_doc(Path) ->
   {_M, Edoc} = edoc:get_doc(Path, Opts),
   Source = edoc:read_source(Path, Opts),
   Docs = xmerl:export_simple([Edoc], rebar3_docs_xmerl),
-  add_function_specs(Docs, Source).
+  specs_and_types(Docs, Source).
 
--spec add_function_specs([any()], [any()]) -> [any()].
-add_function_specs(Docs, Source) ->
-  FoldFun = fun(X, Acc) ->
-                case erl_syntax:type(X) of
-                  attribute ->
-                    case erl_syntax_lib:analyze_attribute(X) of
-                      {spec, {spec, {{F, A}, _}}} ->
-                        Data = pretty_print_spec(X),
-                        Acc#{{F, A} => Data};
-                      _  -> Acc
-                    end;
-                  _ -> Acc
+-spec specs_and_types([any()], [any()]) -> [any()].
+specs_and_types(Docs, Source) ->
+  #{ specs := Specs
+   , types := TypesDesc
+   } = lists:foldl( fun extract_specs_and_types/2
+                  , #{specs => #{}, types => #{}}
+                  , Source
+                  ),
+
+  Functions = [ begin
+                  Name = proplists:get_value(name, Function),
+                  Arity = proplists:get_value(arity, Function),
+                  Spec = maps:get({Name, Arity}, Specs, none),
+                  [{spec, Spec} | Function]
                 end
-            end,
-  Source1 = lists:foldl(FoldFun, #{}, Source),
+                || Function <- proplists:get_value(functions, Docs, [])
+              ],
 
-  Functions0 = proplists:get_value(functions, Docs, []),
+  Types = [ begin
+              Name = proplists:get_value(name, Type),
+              Arity = proplists:get_value(arity, Type),
+              Desc = maps:get({Name, Arity}, TypesDesc, none),
+              [{description, Desc} | Type]
+            end
+            || Type <- proplists:get_value(types, Docs, [])
+          ],
 
-  F = fun(Function) ->
-          Name = proplists:get_value(name, Function),
-          Arity = proplists:get_value(arity, Function),
-          Spec = maps:get({Name, Arity}, Source1, none),
-          [{spec, Spec} | Function]
-      end,
+  [{functions, Functions}, {types, Types} | Docs].
 
-  [{functions, lists:map(F, Functions0)} | Docs].
-
--spec pretty_print_spec(any()) -> string().
-pretty_print_spec(Tree) ->
-  try
-    erl_prettypr:format(Tree)
-  catch _:_:_ ->
-      ""
+extract_specs_and_types(Tree, #{specs := Specs, types:= Types} = M) ->
+  case erl_syntax:type(Tree) of
+    attribute ->
+      case erl_syntax_lib:analyze_attribute(Tree) of
+        {spec, {spec, {{F, A}, _}}} ->
+          Data = pretty_print(Tree),
+          M#{specs := Specs#{{F, A} => Data}};
+        {type, {type, {Type, _, Args}}} ->
+          M#{types := Types#{{Type, length(Args)} => pretty_print(Tree)}};
+        _  -> M
+      end;
+    _ -> M
   end.
+
+-spec pretty_print(any()) -> string().
+pretty_print(Tree) ->
+  erl_pp:attribute(Tree).
 
 -spec ensure_output_dir(options()) -> ok.
 ensure_output_dir(#{output_dir := Dir}) ->

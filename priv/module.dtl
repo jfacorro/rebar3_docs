@@ -13,9 +13,49 @@
         {% if module.description != "none" %}
         <p>{{ module.description }}</p>
         {% endif %}
+
+        <!------- Summary ------->
+        <h1>Summary</h1>
+        <!------- Types summary ------->
+        <h2>Types</h2>
+        {% for type in module.types %}
+        <ul>
+          <li>
+            <a href="#{{ type.name }}-{{ type.arity }}">{{ type.name }}()</a>
+          </li>
+        </ul>
+        {% endfor %}
+
+        <!------- Functions summary ------->
+        <h2>Functions</h2>
+        {% for function in module.functions %}
+        <ul>
+          <li>
+            <a href="#{{ function.name }}-{{ function.arity }}">
+              {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
+            </a>
+          </li>
+        </ul>
+        {% endfor %}
+
+        <!------- Types details ------->
+        <h1>Types</h1>
+        {% for type in module.types %}
+        <h3>
+          <a id="{{ type.name }}-{{ type.arity }}" href="#{{ type.name }}-{{ type.arity }}">
+            {{ type.name }}()
+          </a>
+          {% if type.description != "none" %}
+          <pre>{{ type.description|safe }}</pre>
+          {% endif %}
+        </h3>
+        {% endfor %}
+
+        <!------- Functions details ------->
+        <h1>Functions</h1>
         {% for function in module.functions %}
         <h3>
-          <a id="{{ function.name }}" href="#{{ function.name }}">
+          <a id="{{ function.name }}-{{ function.arity }}" href="#{{ function.name }}-{{ function.arity }}">
             {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
           </a>
           {% if function.spec != "none" %}
