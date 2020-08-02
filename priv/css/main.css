@@ -9,10 +9,11 @@ body {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #333;
+    background-color: #7d1c1e;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
+    padding: 0px;
+    margin: 0px;
     color: #ffffff;
 }
 
@@ -89,8 +90,9 @@ body {
 }
 
 #content {
-    margin: auto;
-    width: 800px;
+    max-width: 829px;
+    margin: 0 auto;
+    padding: 3px 60px;
 }
 
 #content a {
@@ -109,6 +111,7 @@ body {
 
 #summary ul li {
     list-style-type: none;
+    margin: 10px 0px;
 }
 
 #summary .synopsis {
@@ -123,12 +126,12 @@ body {
 }
 
 .signature {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: bold;
 }
 
 .definition {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: #666;
 }
 

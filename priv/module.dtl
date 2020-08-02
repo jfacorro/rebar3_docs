@@ -23,22 +23,22 @@
           {% if module.types|length > 0 %}
           <!------- Types summary ------->
           <h2>Types</h2>
-          {% for type in module.types %}
           <ul>
+          {% for type in module.types %}
             <li>
               <a href="#{{ type.name }}/{{ type.arity }}">
                 <span class="signature">{{ type.name }}()</span>
               </a>
             </li>
-          </ul>
           {% endfor %}
+          </ul>
           {% endif %}
 
           {% if module.functions|length > 0 %}
           <!------- Functions summary ------->
           <h2>Functions</h2>
-          {% for function in module.functions %}
           <ul>
+          {% for function in module.functions %}
             <li>
               <a href="#{{ function.name }}/{{ function.arity }}">
                 <span class="signature">
@@ -49,8 +49,8 @@
               <div class="synopsis">{{ function.synopsis|safe }}</div>
               {% endif %}
             </li>
-          </ul>
           {% endfor %}
+          </ul>
           {% endif %}
         </section>
         {% endif %}
