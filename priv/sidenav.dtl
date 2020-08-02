@@ -1,8 +1,14 @@
 <div id="sidenav" class="sidenav nav">
   <span id="hide-nav-button" class="closebtn" onclick="closeNav()">&#9776;</span>
-  <h1>{{ application }}</h1>
-  <h2>{{ version }}</h2>
-  {% for m in modules %}
-  <a href="{{ m.name }}.html">{{ m.name }}</a>
-  {% endfor %}
+  <div id="sidenav-title">
+    <h1>{{ application }}</h1>
+    <h2>{{ version }}</h2>
+  </div>
+  {% if modules|length > 0 %}
+  <ul>
+    {% for m in modules %}
+    <li><a href="{{ m.name }}.html">{{ m.name }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
 </div>

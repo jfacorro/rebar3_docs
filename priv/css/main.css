@@ -1,5 +1,6 @@
 body {
-    font-family: Lato, sans-serif;
+    font-family: Optima,Segoe,Segoe UI,Candara,Calibri,Arial,sans-serif;
+    /* font-family: Lato, sans-serif; */
     margin: 0px;
 }
 
@@ -9,17 +10,12 @@ body {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #7d1c1e;
+    background-color: #C33F35;
     overflow-x: hidden;
     transition: 0.5s;
     padding: 0px;
     margin: 0px;
     color: #ffffff;
-}
-
-#sidenav h1, #sidenav h2 {
-    padding: 0px 0px 0px 32px;
-    margin: 5px 0px;
 }
 
 #sidenav.nav {
@@ -30,17 +26,26 @@ body {
     width: 0px;
 }
 
+#sidenav ul {
+    padding-left: 10px;
+}
+
+#sidenav ul li {
+    list-style-type: none;
+    margin: 5px 0px;
+}
+
 #sidenav a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 1.0em;
-    color: #aaaaaa;
-    display: block;
+    color: #f1f1f1;
     transition: 0.3s;
 }
 
 #sidenav a:hover {
-    color: #f1f1f1;
+    text-shadow: 0 0 3px #fff;
+    color: #fff;
 }
 
 #sidenav #hide-nav-button {
@@ -49,6 +54,20 @@ body {
     right: 5px;
     font-size: 25px;
     cursor: pointer;
+}
+
+#sidenav-title {
+    margin: 10px 0 10px 30px;
+}
+
+#sidenav-title h1 {
+    font-size: 1.5em;
+    margin: 5px 0px;
+}
+
+#sidenav-title h2 {
+    font-size: 1em;
+    margin: 5px 0px;
 }
 
 #show-nav-button {
