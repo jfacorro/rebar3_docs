@@ -48,14 +48,6 @@ body {
     color: #fff;
 }
 
-#sidenav #hide-nav-button {
-    position: absolute;
-    top: 0px;
-    right: 5px;
-    font-size: 25px;
-    cursor: pointer;
-}
-
 #sidenav-title {
     margin: 10px 0 10px 30px;
 }
@@ -70,12 +62,19 @@ body {
     margin: 5px 0px;
 }
 
-#show-nav-button {
+#hide-nav-button, #show-nav-button {
     position: absolute;
-    top: 0px;
-    left: 5px;
-    font-size: 25px;
+    top: 8px;
+    font-size: 20px;
     cursor: pointer;
+}
+
+#hide-nav-button {
+    right: 15px;
+}
+
+#show-nav-button {
+    left: 15px;
     transition: visibility 0s, opacity 0.5s linear;
 }
 
