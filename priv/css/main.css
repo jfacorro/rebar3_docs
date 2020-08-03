@@ -4,6 +4,10 @@ body {
     margin: 0px;
 }
 
+section, p {
+    text-align: justify;
+}
+
 #sidenav {
     height: 100%;
     position: fixed;
