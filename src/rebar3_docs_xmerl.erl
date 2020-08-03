@@ -20,7 +20,7 @@
                                | #xmlDecl{}
                                ].
 
--define(il2b(IOList), iolist_to_binary(IOList)).
+-define(il2b(IOList), unicode:characters_to_binary(IOList)).
 -define(l2i(L), list_to_integer(L)).
 -define(l2ea(L), list_to_existing_atom(L)).
 

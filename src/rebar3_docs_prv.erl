@@ -36,15 +36,15 @@ do(State) ->
 
   Opts0 = #{ application => AppName
            , output_dir => output_dir(State)
+           , include_dirs => include_dirs(AppInfo)
            , version => AppVersion
            },
 
   ensure_output_dir(Opts0),
   setup_templates(Opts0),
 
-
   Files = rebar_utils:find_files("src", ".erl$"),
-  Modules1 = [parse_doc(Path) || Path <- Files],
+  Modules1 = [parse_doc(Path, Opts0) || Path <- Files],
   Modules  = lists:sort(fun sort_by_name/2, Modules1),
   Opts1 = Opts0#{modules => Modules},
   Sidenav = generate(sidenav_dtl, undefined, Opts1),
@@ -68,13 +68,25 @@ output_dir(State) ->
   {Args, _} = rebar_state:command_parsed_args(State),
   proplists:get_value(out, Args, "docs").
 
+-spec include_dirs(rebar_app_info:t()) -> string().
+include_dirs(AppInfo) ->
+  OutDir = rebar_app_info:out_dir(AppInfo),
+  BaseDir = rebar_app_info:dir(AppInfo),
+  RebarOpts = rebar_app_info:opts(AppInfo),
+  ErlOpts = rebar_opts:erl_opts(RebarOpts),
+  ErlOptIncludes = proplists:get_all_values(i, ErlOpts),
+  [ filename:join([BaseDir, "include"])
+  , filename:join(OutDir, "..")
+  | lists:map(fun(Incl) -> filename:absname(Incl) end, ErlOptIncludes)
+  ].
+
 -spec sort_by_name(any(), any()) -> boolean().
 sort_by_name(X, Y) ->
   proplists:get_value(name, X) < proplists:get_value(name, Y).
 
--spec parse_doc(string()) -> map().
-parse_doc(Path) ->
-  Opts = [{preprocess, true}, {includes, [?INCLUDE]}],
+-spec parse_doc(string(), options()) -> map().
+parse_doc(Path, #{include_dirs := IncludeDirs}) ->
+  Opts = [{preprocess, true}, {includes, IncludeDirs}],
   {_M, Edoc} = edoc:get_doc(Path, Opts),
   Source = edoc:read_source(Path, Opts),
   Docs = xmerl:export_simple([Edoc], rebar3_docs_xmerl),
