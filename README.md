@@ -26,6 +26,7 @@ Then just call your plugin directly in an existing application:
 
 Useful links:
 
-- https://github.com/census-instrumentation/opencensus-erlang/tree/master/doc
-- https://github.com/uwiger/edown
-- https://github.com/erszcz/docsh
+- [docsh - Documentationi in the Erlang shell](https://github.com/erszcz/docsh)
+- [HTML+JS Sidenav How To](https://www.w3schools.com/howto/howto_js_sidenav.asp)
+- [Erlang Ecosystem Foundation - Documentation Working Group](https://github.com/erlef/documentation-wg/issues/5)
+- [edown - edoc to markdown](https://github.com/uwiger/edown)
