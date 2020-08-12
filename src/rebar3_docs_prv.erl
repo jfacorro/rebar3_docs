@@ -20,7 +20,7 @@ init(State) ->
             , {bare, true}
             , {deps, ?DEPS}
             , {example, "rebar3 docs"}
-            , {opts, [{out, $o, "out", "docs", "Output directory"}]}
+            , {opts, [{out, $o, "out", string, "Output directory"}]}
             , {short_desc, "Generates nice looking documentation"}
             , {desc, "Generates nice looking documentation"}
             ],
