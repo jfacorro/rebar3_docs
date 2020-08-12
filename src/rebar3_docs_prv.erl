@@ -87,10 +87,15 @@ sort_by_name(X, Y) ->
 -spec parse_doc(string(), options()) -> map().
 parse_doc(Path, #{include_dirs := IncludeDirs}) ->
   Opts = [{preprocess, true}, {includes, IncludeDirs}],
-  {_M, Edoc} = edoc:get_doc(Path, Opts),
-  Source = edoc:read_source(Path, Opts),
-  Docs = xmerl:export_simple([Edoc], rebar3_docs_xmerl),
-  specs_and_types(Docs, Source).
+  try
+    {_M, Edoc} = edoc:get_doc(Path, Opts),
+    Source = edoc:read_source(Path, Opts),
+    Docs = xmerl:export_simple([Edoc], rebar3_docs_xmerl),
+    specs_and_types(Docs, Source)
+  catch _:_ ->
+      rebar_api:error("Failed to process docs for ~s", [Path]),
+      [{functions, []}, {types, []}]
+  end.
 
 -spec specs_and_types([any()], [any()]) -> [any()].
 specs_and_types(Docs, Source) ->
