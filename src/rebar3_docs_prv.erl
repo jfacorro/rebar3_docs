@@ -45,7 +45,8 @@ do(State) ->
 
   Files = rebar_utils:find_files("src", ".erl$"),
   Modules1 = [parse_doc(Path, Opts0) || Path <- Files],
-  Modules  = lists:sort(fun sort_by_name/2, Modules1),
+  Modules2 = [M || M <- Modules1, proplists:get_value(name, M) =/= undefined],
+  Modules  = lists:sort(fun sort_by_name/2, Modules2),
   Opts1 = Opts0#{modules => Modules},
   Sidenav = generate(sidenav_dtl, undefined, Opts1),
 
@@ -176,9 +177,11 @@ copy_files(From, To, Paths) ->
 generate(module_dtl, Module, #{output_dir := Dir} = Opts) ->
   Name          = proplists:get_value(name, Module),
   Variables     = maps:to_list(Opts#{module => Module}),
-  {ok, Content} = module_dtl:render(Variables),
   Filename      = atom_to_list(Name) ++ ".html",
-  file:write_file(filename:join(Dir, Filename), Content);
+  Path          = filename:join(Dir, Filename),
+  rebar_api:debug("Generating ~s", [Path]),
+  {ok, Content} = module_dtl:render(Variables),
+  ok = file:write_file(Path, unicode:characters_to_binary(Content));
 generate(sidenav_dtl, _, Opts) ->
   Variables     = maps:to_list(Opts),
   {ok, Content} = sidenav_dtl:render(Variables),
