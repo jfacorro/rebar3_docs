@@ -1,11 +1,14 @@
-<div id="sidenav" class="sidenav nav">
-  <span id="hide-nav-button" class="closebtn" onclick="closeNav()">&#9776;</span>
+<div id="sidenav" class="nav">
+  <form>
+    <input id="search" type="text" autocomplete="off" />
+  </form>
+  <span id="hide-nav-button" onclick="closeNav()">&#9776;</span>
   <div id="sidenav-title">
     <h1>{{ application }}</h1>
     <h2>{{ version }}</h2>
   </div>
   {% if modules|length > 0 %}
-  <ul>
+  <ul id="sidenav-modules">
     {% for m in modules %}
     <li><a href="{{ m.name }}.html">{{ m.name }}</a></li>
     {% endfor %}
