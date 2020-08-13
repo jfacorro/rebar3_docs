@@ -192,9 +192,12 @@ full_description(#xmlElement{name = fullDescription, content = Content}) ->
 %% XmlElements :: [#xmlElement()|#xmlText()|#xmlPI()|#xmlComment()|#xmlDecl()]
 format_text(XmlElements) when is_list(XmlElements)->
   [format_text(X) || X <- XmlElements];
-format_text(#xmlElement{name = Name, content = Content}) ->
+format_text(#xmlElement{name = Name, content = Content, attributes = Attrs}) ->
   NameStr = atom_to_list(Name),
-  ["<", NameStr, ">", format_text(Content), "</", NameStr, ">"];
+  [ "<", NameStr, " ", format_attributes(Attrs), ">"
+  , format_text(Content)
+  , "</", NameStr, ">"
+  ];
 format_text(#xmlText{value = Value}) ->
   Value;
 format_text(#xmlPI{value = Value}) ->
@@ -203,6 +206,27 @@ format_text(#xmlComment{}) ->
   [];
 format_text(#xmlDecl{}) ->
   [].
+
+-spec format_attributes([#xmlAttribute{}]) -> unicode:chardata().
+format_attributes(Attrs) ->
+  format_attributes(Attrs, []).
+
+-spec format_attributes([#xmlAttribute{}], unicode:chardata()) ->
+  unicode:chardata().
+format_attributes([], Result) ->
+  Result;
+format_attributes([#xmlAttribute{name = Name, value = Value} | Attrs], Result) ->
+  NameBin = atom_to_binary(Name, utf8),
+  ValueStr = to_chardata(Value),
+  format_attributes(Attrs, [Result, NameBin, "=\"", ValueStr, "\""]).
+
+-spec to_chardata(any()) -> unicode:chardata().
+to_chardata(X) when is_atom(X) ->
+  atom_to_binary(X, utf8);
+to_chardata(X) when is_integer(X) ->
+  integer_to_binary(X);
+to_chardata(X) ->
+  X.
 
 type_def(ContinueFun, #xmlElement{name = typedecl} = Type) ->
   case content(typedef, {error, no_typedef}, ContinueFun, Type) of
