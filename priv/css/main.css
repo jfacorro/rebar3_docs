@@ -1,4 +1,4 @@
-body {
+body, form {
     margin: 0px;
 }
 
@@ -12,6 +12,19 @@ input:focus {
 
 section, p {
     text-align: justify;
+}
+
+a {
+    text-decoration: none;
+    color: #000000;
+}
+
+a:visited {
+    color: #000000;
+}
+
+a:hover {
+    text-decoration: none;
 }
 
 #sidenav {
@@ -31,10 +44,13 @@ section, p {
 
 #sidenav.nav {
     width: 300px;
+    visibility: visible;
 }
 
 #sidenav.no-nav {
     width: 0px;
+    z-index: 0;
+    visibility: hidden;
 }
 
 #sidenav-modules {
@@ -42,6 +58,7 @@ section, p {
     overflow-x: hidden;
     overflow-y: scroll;
     flex: 1 1 0.0%;
+    padding-bottom: 50px;
 }
 
 #sidenav ul {
@@ -55,7 +72,6 @@ section, p {
 
 #sidenav a {
     padding: 8px 8px 8px 32px;
-    text-decoration: none;
     font-size: 1.0em;
     color: #f1f1f1;
     transition: 0.3s;
@@ -67,7 +83,7 @@ section, p {
 }
 
 #sidenav-title {
-    margin: 60px 0 10px 30px;
+    margin: 23px 0 10px 30px;
 }
 
 #sidenav-title h1 {
@@ -80,21 +96,25 @@ section, p {
     margin: 5px 0px;
 }
 
+#sidenav form {
+    padding: 10px 10px 0px 10px;
+}
+
 #search {
-    position: absolute;
-    top: 9px;
-    left: 10px;
     height: 30px;
-    width: 280px;
     border: none;
     border-radius: 5px;
     padding: 0px 30px 0px 15px;
     font-size: 1em;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #hide-nav-button, #show-nav-button {
     position: absolute;
-    top: 8px;
+    top: 9px;
     font-size: 20px;
     cursor: pointer;
 }
@@ -144,22 +164,17 @@ section, p {
     padding: 3px 60px;
 }
 
-#content ul li a, #content h2 a {
-    text-decoration: none;
-    color: #000000;
-}
-
-#content a {
+#content p a {
     color: #C33F35;
     font-weight: bold;
     text-decoration: none;
 }
 
-#content a:visited {
+#content p a:visited {
     color: #ce9393;
 }
 
-#content a:hover {
+#content p a:hover {
     text-decoration: underline;
 }
 
@@ -179,6 +194,7 @@ section, p {
 }
 
 #summary .synopsis {
+    color: #666;
     margin-top: 10px;
     padding-left: 20px;
     font-style: italic;
@@ -186,11 +202,11 @@ section, p {
 
 .signature, .definition {
     margin: 5px 0px 0px 0px;
-    font-family: "Lucida Console", Monaco, monospace;
+    font-family: Menlo, Courier, monospace;
 }
 
 .signature {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: bold;
 }
 
