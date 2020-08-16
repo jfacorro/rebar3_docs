@@ -55,7 +55,7 @@ do(State) ->
   [generate(module_dtl, M, Opts) || M <- Modules],
 
   IndexVars = [{content, <<>>}, {title, AppName}],
-  ok = generate(content_dtl, IndexVars, Opts#{filename => "index.html"}),
+  ok = generate(landing_dtl, IndexVars, Opts#{filename => "index.html"}),
 
   {ok, State}.
 
@@ -159,7 +159,7 @@ ensure_output_dir(#{output_dir := Dir}) ->
 -spec setup_templates(options()) -> ok.
 setup_templates(#{output_dir := OutDir}) ->
   PrivDir = code:priv_dir(rebar3_docs),
-  Templates = ["module", "sidenav", "content"],
+  Templates = ["module", "sidenav", "landing"],
   [ begin
       TemplatePath = filename:join(PrivDir, T ++ ".dtl"),
       Module = list_to_atom(T ++ "_dtl"),
@@ -189,9 +189,9 @@ generate(sidenav_dtl, _, Opts) ->
   Variables = maps:to_list(Opts),
   {ok, Content} = sidenav_dtl:render(Variables),
   Content;
-generate(content_dtl, Variables, Opts) ->
+generate(landing_dtl, Variables, Opts) ->
   #{output_dir := Dir, filename := Filename} = Opts,
   Vars = Variables ++ maps:to_list(Opts),
   Path = filename:join(Dir, Filename),
-  {ok, Content} = content_dtl:render(Vars),
+  {ok, Content} = landing_dtl:render(Vars),
   ok = file:write_file(Path, unicode:characters_to_binary(Content)).
