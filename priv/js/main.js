@@ -53,6 +53,12 @@ function autocomplete(input) {
     return result;
   };
 
+  var highlightQuery = function(text, query) {
+    return text.replace(new RegExp(query, "i"), function(match) {
+      return "<strong>" + match + "</strong>";
+    });
+  };
+
   var createResultList = function(parent, result, query) {
     var div = document.createElement("div");
     div.setAttribute("id", "autocomplete-items");
@@ -65,7 +71,7 @@ function autocomplete(input) {
 
       var itemDiv = document.createElement("div");
       itemDiv.setAttribute("class", "autocomplete-item");
-      itemDiv.innerHTML = item.name.replace(query, "<strong>" + query + "</strong>");
+      itemDiv.innerHTML = highlightQuery(item.name, query);
       itemDiv.innerHTML += item.type == "type" ? " (type)" : "";
       itemDiv.innerHTML += item.type != "module" ? "<span>" + item.module + "</span>" : "";
       itemLink.appendChild(itemDiv);
