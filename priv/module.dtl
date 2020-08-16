@@ -56,14 +56,14 @@
         <section id="types">
           <h1>Types</h1>
           {% for type in module.types %}
-          <h2 class="type">
-            <a id="{{ type.name }}/{{ type.arity }}" href="#{{ type.name }}/{{ type.arity }}">
+          <a id="{{ type.name }}/{{ type.arity }}" href="#{{ type.name }}/{{ type.arity }}">
+            <h2 class="type">
               <span class="signature"> {{ type.name }}()</span>
-            </a>
-            {% if type.description != "none" %}
-            <div class="definition">{{ type.description|safe }}</div>
-            {% endif %}
-          </h2>
+              {% if type.description != "none" %}
+              <div class="definition">{{ type.description|safe }}</div>
+              {% endif %}
+            </h2>
+          </a>
           {% endfor %}
         </section>
         {% endif %}
@@ -73,16 +73,16 @@
         <section id="functions">
           <h1>Functions</h1>
           {% for function in module.functions %}
-          <h2 class="function">
-            <a id="{{ function.name }}/{{ function.arity }}" href="#{{ function.name }}/{{ function.arity }}">
+          <a id="{{ function.name }}/{{ function.arity }}" href="#{{ function.name }}/{{ function.arity }}">
+            <h2 class="function">
               <span class="signature">
                 {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
               </span>
-            </a>
-            {% if function.spec != "none" %}
-            <div class="definition">{{ function.spec }}</div>
-            {% endif %}
-          </h2>
+              {% if function.spec != "none" %}
+              <div class="definition">{{ function.spec }}</div>
+              {% endif %}
+            </h2>
+          </a>
           {% if function.description != "none" %}
           <p>{{ function.description|safe }}</p>
           {% endif %}

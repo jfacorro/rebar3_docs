@@ -103,6 +103,7 @@ function autocomplete(input) {
       if(e.keyCode == DOM_KEY_ENTER) {
         if(currentFocus > -1) {
           items[currentFocus].click();
+          deleteResultList();
         }
       } else {
         updateActiveItem(items);
