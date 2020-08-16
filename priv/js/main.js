@@ -17,26 +17,36 @@ function isMatch(x, y) {
   return x.toLowerCase().indexOf(y.toLowerCase()) != -1;
 }
 
-function findMatches(result, query, items, type, module) {
-  for(item of items) {
-    if(isMatch(item, query)) {
-      result.push({
-        "name": item,
-        "type": type,
-        "module": type != "module" ? module : item
-      });
-    }
-  }
-}
-
 function autocomplete(input) {
-  var items = navTree;
+  const MAX_RESULT_COUNT = 5;
+  const DOM_KEY_DOWN = 40;
+  const DOM_KEY_UP = 38;
+  const DOM_KEY_ENTER = 13;
+  const DOM_KEY_ESCAPE = 27;
+
+  const navItems = navTree;
+  var currentItemIndex = -1;
+
+  var findMatches = function(result, query, items, type, module) {
+    for(item of items) {
+      if(result.length >= MAX_RESULT_COUNT) {
+        return;
+      }
+      if(isMatch(item, query)) {
+        result.push({
+          "name": item,
+          "type": type,
+          "module": type != "module" ? module : item
+        });
+      }
+    }
+  };
 
   var find = function(query) {
     var result = [];
-    findMatches(result, query, Object.keys(items), "module");
-    for(moduleName in items) {
-      var module = items[moduleName];
+    findMatches(result, query, Object.keys(navItems), "module");
+    for(moduleName in navItems) {
+      var module = navItems[moduleName];
       findMatches(result, query, module.functions, "function", moduleName);
       findMatches(result, query, module.types, "type", moduleName);
     }
@@ -63,6 +73,7 @@ function autocomplete(input) {
   };
 
   var deleteResultList = function() {
+    currentItemIndex = -1;
     for(x of document.getElementsByClassName("autocomplete-items")) {
       x.parentNode.removeChild(x);
     }
@@ -83,26 +94,20 @@ function autocomplete(input) {
     return true;
   };
 
-  var DOM_KEY_DOWN = 40;
-  var DOM_KEY_UP = 38;
-  var DOM_KEY_ENTER = 13;
-  var DOM_KEY_ESCAPE = 27;
-  var currentFocus = -1;
-
   var navigate = function(e) {
     var items = document.getElementById("autocomplete-items");
     if (items) {
       items = items.getElementsByClassName("autocomplete-item");
       switch(e.keyCode) {
-        case DOM_KEY_DOWN:   currentFocus++; break;
-        case DOM_KEY_UP:     currentFocus--; break;
+        case DOM_KEY_DOWN:   currentItemIndex++; break;
+        case DOM_KEY_UP:     currentItemIndex--; break;
         case DOM_KEY_ENTER:  e.preventDefault(); break;
         case DOM_KEY_ESCAPE: close(this); return;
         default: return;
       }
       if(e.keyCode == DOM_KEY_ENTER) {
-        if(currentFocus > -1) {
-          items[currentFocus].click();
+        if(currentItemIndex > -1) {
+          items[currentItemIndex].click();
           deleteResultList();
         }
       } else {
@@ -113,9 +118,9 @@ function autocomplete(input) {
 
   var updateActiveItem = function(items) {
     for (item of items) { item.classList.remove("autocomplete-active"); }
-    if (currentFocus >= items.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (items.length - 1);
-    items[currentFocus].classList.add("autocomplete-active");
+    if (currentItemIndex >= items.length) currentItemIndex = 0;
+    if (currentItemIndex < 0) currentItemIndex = (items.length - 1);
+    items[currentItemIndex].classList.add("autocomplete-active");
   };
 
   input.addEventListener('input', run);
