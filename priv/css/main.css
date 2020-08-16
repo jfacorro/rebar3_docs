@@ -114,8 +114,9 @@ a:hover {
 
 #hide-nav-button, #show-nav-button {
     position: absolute;
-    top: 9px;
+    top: 14px;
     font-size: 20px;
+    line-height: 20px;
     cursor: pointer;
 }
 
