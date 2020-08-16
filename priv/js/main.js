@@ -49,15 +49,16 @@ function autocomplete(input) {
     div.setAttribute("class", "autocomplete-items");
     parent.appendChild(div);
     for(item of result) {
-      var itemDiv = document.createElement("div");
-      itemDiv.setAttribute("class", "autocomplete-item");
       var itemLink = document.createElement("a");
       var href = item.module + ".html" + (item.type == "module" ? "" : "#" + item.name);
       itemLink.setAttribute("href", href);
-      itemLink.innerHTML = item.name + (item.type == "type" ? " (type)" : "");
-      itemLink.innerHTML += (item.type == "module" ? "" : "<br/>" + item.module);
-      itemDiv.appendChild(itemLink);
-      div.appendChild(itemDiv);
+
+      var itemDiv = document.createElement("div");
+      itemDiv.setAttribute("class", "autocomplete-item");
+      itemDiv.innerHTML = item.name + (item.type == "type" ? " (type)" : "");
+      itemDiv.innerHTML += (item.type == "module" ? "" : "<br/>" + item.module);
+      itemLink.appendChild(itemDiv);
+      div.appendChild(itemLink);
     }
   };
 
