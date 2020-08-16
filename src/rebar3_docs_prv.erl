@@ -54,6 +54,9 @@ do(State) ->
 
   [generate(module_dtl, M, Opts) || M <- Modules],
 
+  IndexVars = [{content, <<>>}, {title, AppName}],
+  ok = generate(content_dtl, IndexVars, Opts#{filename => "index.html"}),
+
   {ok, State}.
 
 -spec format_error(any()) ->  iolist().
@@ -156,7 +159,7 @@ ensure_output_dir(#{output_dir := Dir}) ->
 -spec setup_templates(options()) -> ok.
 setup_templates(#{output_dir := OutDir}) ->
   PrivDir = code:priv_dir(rebar3_docs),
-  Templates = ["module", "sidenav"],
+  Templates = ["module", "sidenav", "content"],
   [ begin
       TemplatePath = filename:join(PrivDir, T ++ ".dtl"),
       Module = list_to_atom(T ++ "_dtl"),
@@ -173,7 +176,7 @@ copy_files(From, To, Paths) ->
   ],
   ok.
 
--spec generate(module(), map(), options()) -> ok.
+-spec generate(module(), map(), options()) -> ok | binary().
 generate(module_dtl, Module, #{output_dir := Dir} = Opts) ->
   Name          = proplists:get_value(name, Module),
   Variables     = maps:to_list(Opts#{module => Module}),
@@ -185,4 +188,10 @@ generate(module_dtl, Module, #{output_dir := Dir} = Opts) ->
 generate(sidenav_dtl, _, Opts) ->
   Variables     = maps:to_list(Opts),
   {ok, Content} = sidenav_dtl:render(Variables),
-  Content.
+  Content;
+generate(content_dtl, Variables, Opts) ->
+  #{output_dir := Dir, filename := Filename} = Opts,
+  Vars          = Variables ++ maps:to_list(Opts),
+  Path          = filename:join(Dir, Filename),
+  {ok, Content} = content_dtl:render(Vars),
+  ok = file:write_file(Path, unicode:characters_to_binary(Content)).

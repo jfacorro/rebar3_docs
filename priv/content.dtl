@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }} — {{ application }} {{ version }}</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/main.js"></script>
+  </head>
+  <body>
+    {{ sidenav|safe }}
+    <div id="main" class="nav">
+      <span id="show-nav-button" class="nav" onclick="openNav()">&#9776;</span>
+      <div id="content">
+        <section id="top">
+          <h1>{{ title }}</h1>
+        </section>
+        {{ content|safe }}
+      </div>
+    </div>
+  </body>
+</html>
