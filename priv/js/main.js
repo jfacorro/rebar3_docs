@@ -53,7 +53,7 @@ function autocomplete(input) {
     return result;
   };
 
-  var createResultList = function(parent, result) {
+  var createResultList = function(parent, result, query) {
     var div = document.createElement("div");
     div.setAttribute("id", "autocomplete-items");
     div.setAttribute("class", "autocomplete-items");
@@ -65,7 +65,7 @@ function autocomplete(input) {
 
       var itemDiv = document.createElement("div");
       itemDiv.setAttribute("class", "autocomplete-item");
-      itemDiv.innerHTML = item.name;
+      itemDiv.innerHTML = item.name.replace(query, "<strong>" + query + "</strong>");
       itemDiv.innerHTML += item.type == "type" ? " (type)" : "";
       itemDiv.innerHTML += item.type != "module" ? "<span>" + item.module + "</span>" : "";
       itemLink.appendChild(itemDiv);
@@ -90,7 +90,7 @@ function autocomplete(input) {
     if (!query) { return false; }
 
     deleteResultList();
-    createResultList(this.parentNode, find(query));
+    createResultList(this.parentNode, find(query), query);
 
     return true;
   };
