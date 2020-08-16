@@ -53,14 +53,6 @@ a:hover {
     visibility: hidden;
 }
 
-#sidenav-modules {
-    margin: 0px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    flex: 1 1 0.0%;
-    padding-bottom: 50px;
-}
-
 #sidenav ul {
     padding-left: 10px;
 }
@@ -71,7 +63,6 @@ a:hover {
 }
 
 #sidenav a {
-    padding: 8px 8px 8px 32px;
     font-size: 1.0em;
     color: #f1f1f1;
     transition: 0.3s;
@@ -80,6 +71,10 @@ a:hover {
 #sidenav a:hover {
     text-shadow: 0 0 3px #fff;
     color: #fff;
+}
+
+#sidenav form {
+    padding: 10px 10px 0px 10px;
 }
 
 #sidenav-title {
@@ -96,8 +91,16 @@ a:hover {
     margin: 5px 0px;
 }
 
-#sidenav form {
-    padding: 10px 10px 0px 10px;
+#sidenav-modules {
+    margin: 0px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    flex: 1 1 0.0%;
+    padding-bottom: 50px;
+}
+
+#sidenav-modules a {
+    padding: 8px 8px 8px 32px;
 }
 
 #search {

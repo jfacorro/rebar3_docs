@@ -4,7 +4,7 @@
   </form>
   <span id="hide-nav-button" onclick="closeNav()">&#9776;</span>
   <div id="sidenav-title">
-    <h1>{{ application }}</h1>
+    <h1><a href="index.html">{{ application }}</a></h1>
     <h2>{{ version }}</h2>
   </div>
   {% if modules|length > 0 %}
