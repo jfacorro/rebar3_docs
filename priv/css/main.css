@@ -148,15 +148,9 @@ a:hover {
     background-color: #eee;
 }
 
-#search .autocomplete-items div:hover {
+#search .autocomplete-items div:hover, #search div.autocomplete-active {
     border-left: 5px solid #666;
     background-color: #ccc;
-}
-
-#search .autocomplete-active {
-    /*when navigating through the items using the arrow keys:*/
-    background-color: DodgerBlue !important;
-    color: #ffffff;
 }
 
 #hide-nav-button, #show-nav-button {

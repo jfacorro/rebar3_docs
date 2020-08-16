@@ -45,10 +45,12 @@ function autocomplete(input) {
 
   var createResultList = function(parent, result) {
     var div = document.createElement("div");
+    div.setAttribute("id", "autocomplete-items");
     div.setAttribute("class", "autocomplete-items");
     parent.appendChild(div);
     for(item of result) {
       var itemDiv = document.createElement("div");
+      itemDiv.setAttribute("class", "autocomplete-item");
       var itemLink = document.createElement("a");
       var href = item.module + ".html" + (item.type == "module" ? "" : "#" + item.name);
       itemLink.setAttribute("href", href);
@@ -65,6 +67,11 @@ function autocomplete(input) {
     }
   };
 
+  var close = function(search) {
+    search.value = "";
+    deleteResultList();
+  };
+
   var run = function(e) {
     var query = this.value;
     if (!query) { return false; }
@@ -75,7 +82,42 @@ function autocomplete(input) {
     return true;
   };
 
+  var DOM_KEY_DOWN = 40;
+  var DOM_KEY_UP = 38;
+  var DOM_KEY_ENTER = 13;
+  var DOM_KEY_ESCAPE = 27;
+  var currentFocus = -1;
+
+  var navigate = function(e) {
+    var items = document.getElementById("autocomplete-items");
+    if (items) {
+      items = items.getElementsByClassName("autocomplete-item");
+      switch(e.keyCode) {
+        case DOM_KEY_DOWN:   currentFocus++; break;
+        case DOM_KEY_UP:     currentFocus--; break;
+        case DOM_KEY_ENTER:  e.preventDefault(); break;
+        case DOM_KEY_ESCAPE: close(this); return;
+        default: return;
+      }
+      if(e.keyCode == DOM_KEY_ENTER) {
+        if(currentFocus > -1) {
+          items[currentFocus].click();
+        }
+      } else {
+        updateActiveItem(items);
+      }
+    }
+  };
+
+  var updateActiveItem = function(items) {
+    for (item of items) { item.classList.remove("autocomplete-active"); }
+    if (currentFocus >= items.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (items.length - 1);
+    items[currentFocus].classList.add("autocomplete-active");
+  };
+
   input.addEventListener('input', run);
+  input.addEventListener('keydown', navigate);
 }
 
 function ready(f) {
