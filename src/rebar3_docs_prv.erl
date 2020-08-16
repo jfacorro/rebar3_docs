@@ -61,6 +61,8 @@ do(State) ->
   IndexVars = [{content, <<>>}, {title, AppName}, {sidenav, Sidenav}],
   ok = generate(landing_dtl, IndexVars, Opts#{filename => "index.html"}),
 
+  generate_nav_tree(Modules, Opts),
+
   {ok, State}.
 
 -spec format_error(any()) ->  iolist().
@@ -200,3 +202,46 @@ generate(landing_dtl, Variables, Opts) ->
   Path = filename:join(Dir, Filename),
   {ok, Content} = landing_dtl:render(Vars),
   ok = file:write_file(Path, unicode:characters_to_binary(Content)).
+
+-spec generate_nav_tree([any()], options()) -> ok.
+generate_nav_tree(Modules, Opts) ->
+  #{output_dir := Dir} = Opts,
+  NavTree = build_nav_tree(Modules),
+  JSON = jsx:encode(NavTree),
+  Path = filename:join([Dir, "js", "nav-tree.js"]),
+  ok = file:write_file(Path, ["navTree = ", JSON, ";"]).
+
+%% @doc Builds a map where the keys are the module names and the
+%% values are the list of functions and types in the modules.
+%%
+%% This map is meant to be used for displaying items in the side
+%% navigation bar and also in the quick item search.
+-spec build_nav_tree([list()]) -> map().
+build_nav_tree(Modules) ->
+  maps:from_list(build_nav_tree(modules, Modules)).
+
+-spec build_nav_tree(modules | children, [list()]) -> list().
+build_nav_tree(modules, Modules) ->
+  [ begin
+      Name = proplists:get_value(name, M),
+      Functions = proplists:get_value(functions, M, []),
+      Types = proplists:get_value(types, M, []),
+      { Name, #{ functions => build_nav_tree(children, Functions)
+               , types => build_nav_tree(children, Types)
+               }
+      }
+    end
+    || M <- Modules
+  ];
+build_nav_tree(children, Children) ->
+  [ begin
+      Name = proplists:get_value(name, Child),
+      Arity = proplists:get_value(arity, Child),
+      unicode:characters_to_binary( [ atom_to_binary(Name, utf8)
+                                    , "/"
+                                    , integer_to_list(Arity)
+                                    ]
+                                  )
+    end
+    || Child <- Children
+  ].

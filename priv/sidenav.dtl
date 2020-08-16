@@ -1,6 +1,8 @@
 <div id="sidenav" class="nav">
-  <form>
-    <input id="search" type="text" autocomplete="off" />
+  <form id="search">
+     <div class="autocomplete">
+       <input id="search-query" type="text" autocomplete="off" />
+     </div>
   </form>
   <span id="hide-nav-button" onclick="closeNav()">&#9776;</span>
   <div id="sidenav-title">

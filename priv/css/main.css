@@ -34,12 +34,13 @@ a:hover {
     top: 0;
     left: 0;
     background-color: #C33F35;
-    transition: 0.5s;
+    transition: 0.3s;
     padding: 0px;
     margin: 0px;
     color: #ffffff;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 #sidenav.nav {
@@ -103,16 +104,65 @@ a:hover {
     padding: 8px 8px 8px 32px;
 }
 
-#search {
-    height: 30px;
-    border: none;
-    border-radius: 5px;
-    padding: 0px 30px 0px 15px;
-    font-size: 1em;
-    width: 100%;
+#search a {
+    color: #333333;
+    transition: none;
+}
+
+#search a:hover {
+    color: #333333;
+    text-shadow: none;
+}
+
+#search .autocomplete {
+    /*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    width: 100%;
+}
+
+#search-query {
+    height: 30px;
+    border: none;
+    border-radius: 3px;
+    padding: 0px 30px 0px 15px;
+    font-size: 1em;
+    width: 100%;
+}
+
+#search .autocomplete-items {
+    position: absolute;
+    border-top: 1px solid #d4d4d4;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 28px;
+    left: 0;
+    right: 0;
+    overflow: auto;
+}
+
+#search .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #eee;
+}
+
+#search .autocomplete-items div span {
+    display: block;
+    color: #777;
+}
+
+#search .autocomplete-items div strong {
+    color: #C33F35;
+}
+
+#search .autocomplete-items div:hover,
+#search div.autocomplete-active {
+    border-left: 5px solid #666;
+    background-color: #ccc;
 }
 
 #hide-nav-button, #show-nav-button {

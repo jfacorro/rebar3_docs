@@ -3,4 +3,5 @@
   <title>{{ title }} — {{ application }} {{ version }}</title>
   <link rel="stylesheet" type="text/css" href="css/main.css">
   <script src="js/main.js"></script>
+  <script src="js/nav-tree.js"></script>
 </head>
