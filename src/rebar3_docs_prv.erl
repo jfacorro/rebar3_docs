@@ -184,7 +184,7 @@ copy_files(From, To, Paths) ->
 generate(module_dtl, Variables, #{output_dir := Dir} = Opts) ->
   Module = proplists:get_value(module, Variables),
   Name = proplists:get_value(name, Module),
-  Vars = Variables ++ maps:to_list(Opts),
+  Vars = Variables ++ [{title, Name} | maps:to_list(Opts)],
   Filename = atom_to_list(Name) ++ ".html",
   Path = filename:join(Dir, Filename),
   rebar_api:debug("Generating ~s", [Path]),
