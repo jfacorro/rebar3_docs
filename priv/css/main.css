@@ -140,12 +140,18 @@ a:hover {
     top: 28px;
     left: 0;
     right: 0;
+    overflow: auto;
 }
 
 #search .autocomplete-items div {
     padding: 10px;
     cursor: pointer;
     background-color: #eee;
+}
+
+#search .autocomplete-items div span {
+    display: block;
+    color: #777;
 }
 
 #search .autocomplete-items div:hover,

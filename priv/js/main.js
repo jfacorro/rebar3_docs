@@ -65,8 +65,9 @@ function autocomplete(input) {
 
       var itemDiv = document.createElement("div");
       itemDiv.setAttribute("class", "autocomplete-item");
-      itemDiv.innerHTML = item.name + (item.type == "type" ? " (type)" : "");
-      itemDiv.innerHTML += (item.type == "module" ? "" : "<br/>" + item.module);
+      itemDiv.innerHTML = item.name;
+      itemDiv.innerHTML += item.type == "type" ? " (type)" : "";
+      itemDiv.innerHTML += item.type != "module" ? "<span>" + item.module + "</span>" : "";
       itemLink.appendChild(itemDiv);
       div.appendChild(itemLink);
     }
