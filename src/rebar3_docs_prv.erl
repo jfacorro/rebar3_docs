@@ -7,7 +7,12 @@
 
 -define(INCLUDE, "include").
 
--type options() :: #{output_dir := file:filename()}.
+-type options() :: #{ application := string()
+                    , filename => string()
+                    , include_dirs := [file:filename()]
+                    , output_dir := file:filename()
+                    , version := string()
+                    }.
 
 %%==============================================================================
 %% Public API
@@ -34,27 +39,26 @@ do(State) ->
   OriginalVsn = rebar_app_info:original_vsn(AppInfo),
   AppVersion = rebar_utils:vcs_vsn(AppInfo, OriginalVsn, State),
 
-  Opts0 = #{ application => AppName
-           , output_dir => output_dir(State)
-           , include_dirs => include_dirs(AppInfo)
-           , version => AppVersion
-           },
+  Opts = #{ application => AppName
+          , output_dir => output_dir(State)
+          , include_dirs => include_dirs(AppInfo)
+          , version => AppVersion
+          },
 
-  ensure_output_dir(Opts0),
-  setup_templates(Opts0),
+  ensure_output_dir(Opts),
+  setup_templates(Opts),
 
   Files = rebar_utils:find_files("src", ".erl$"),
-  Modules1 = [parse_doc(Path, Opts0) || Path <- Files],
+  Modules1 = [parse_doc(Path, Opts) || Path <- Files],
   Modules2 = [M || M <- Modules1, proplists:get_value(name, M) =/= undefined],
   Modules  = lists:sort(fun sort_by_name/2, Modules2),
-  Opts1 = Opts0#{modules => Modules},
-  Sidenav = generate(sidenav_dtl, undefined, Opts1),
+  Sidenav = generate(sidenav_dtl, [{modules, Modules}], Opts),
 
-  Opts = Opts1#{sidenav => Sidenav},
+  [ generate(module_dtl, [{module, M}, {sidenav, Sidenav}], Opts)
+    || M <- Modules
+  ],
 
-  [generate(module_dtl, M, Opts) || M <- Modules],
-
-  IndexVars = [{content, <<>>}, {title, AppName}],
+  IndexVars = [{content, <<>>}, {title, AppName}, {sidenav, Sidenav}],
   ok = generate(landing_dtl, IndexVars, Opts#{filename => "index.html"}),
 
   {ok, State}.
@@ -72,7 +76,7 @@ output_dir(State) ->
   {Args, _} = rebar_state:command_parsed_args(State),
   proplists:get_value(out, Args, "docs").
 
--spec include_dirs(rebar_app_info:t()) -> string().
+-spec include_dirs(rebar_app_info:t()) -> [string()].
 include_dirs(AppInfo) ->
   OutDir = rebar_app_info:out_dir(AppInfo),
   BaseDir = rebar_app_info:dir(AppInfo),
@@ -88,7 +92,7 @@ include_dirs(AppInfo) ->
 sort_by_name(X, Y) ->
   proplists:get_value(name, X) < proplists:get_value(name, Y).
 
--spec parse_doc(string(), options()) -> map().
+-spec parse_doc(string(), options()) -> [any()].
 parse_doc(Path, #{include_dirs := IncludeDirs}) ->
   Opts = [{preprocess, true}, {includes, IncludeDirs}],
   try
@@ -176,18 +180,19 @@ copy_files(From, To, Paths) ->
   ],
   ok.
 
--spec generate(module(), map(), options()) -> ok | binary().
-generate(module_dtl, Module, #{output_dir := Dir} = Opts) ->
+-spec generate(module(), list(), options()) -> ok | binary().
+generate(module_dtl, Variables, #{output_dir := Dir} = Opts) ->
+  Module = proplists:get_value(module, Variables),
   Name = proplists:get_value(name, Module),
-  Variables = maps:to_list(Opts#{module => Module}),
+  Vars = Variables ++ maps:to_list(Opts),
   Filename = atom_to_list(Name) ++ ".html",
   Path = filename:join(Dir, Filename),
   rebar_api:debug("Generating ~s", [Path]),
-  {ok, Content} = module_dtl:render(Variables),
+  {ok, Content} = module_dtl:render(Vars),
   ok = file:write_file(Path, unicode:characters_to_binary(Content));
-generate(sidenav_dtl, _, Opts) ->
-  Variables = maps:to_list(Opts),
-  {ok, Content} = sidenav_dtl:render(Variables),
+generate(sidenav_dtl, Variables, Opts) ->
+  Vars = Variables ++ maps:to_list(Opts),
+  {ok, Content} = sidenav_dtl:render(Vars),
   Content;
 generate(landing_dtl, Variables, Opts) ->
   #{output_dir := Dir, filename := Filename} = Opts,

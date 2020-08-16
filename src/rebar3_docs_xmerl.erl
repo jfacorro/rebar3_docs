@@ -33,7 +33,7 @@
 
 %% The '#root#' tag is called when the entire structure has been
 %% exported. It does not appear in the structure itself.
--spec '#root#'(any(), any(), any(), any()) -> docsh_internal:t().
+-spec '#root#'(any(), any(), any(), any()) -> [any()].
 '#root#'([#xmlElement{name = module} = Module], _, _, _) ->
   [ {name, name(Module)},
     {description, description(Module)},
@@ -55,7 +55,7 @@
 name(#xmlElement{attributes = Attrs}) ->
   ?l2ea(find_attribute(name, Attrs)).
 
--spec functions(#xmlElement{}) -> [docsh_internal:item()].
+-spec functions(#xmlElement{}) -> [any()].
 functions(#xmlElement{name = module} = M) ->
   content(functions, [], fun functions/1, M);
 functions(#xmlElement{name = functions, content = Content}) ->
@@ -87,7 +87,7 @@ function(#xmlElement{attributes = Attrs} = Function) ->
   , {spec        , typespec(Function)}
   ].
 
--spec arguments(#xmlElement{}) -> [tuple()].
+-spec arguments(#xmlElement{}) -> [any()].
 arguments(#xmlElement{name = function, content = Elements}) ->
   case find_elements(args, Elements) of
     [#xmlElement{content = Args}] ->
@@ -113,7 +113,7 @@ typespec(#xmlElement{name = function, content = Elements}) ->
     [] -> none
   end.
 
--spec argument_types(#xmlElement{}) -> [tuple()].
+-spec argument_types(#xmlElement{}) -> [any()].
 argument_types(Types) ->
   case find_elements([argtypes, type], Types) of
     []       -> [];
@@ -130,14 +130,14 @@ return_type(Types) ->
 parse_type(_Type) ->
   [{name, "any()"}].
 
--spec types(#xmlElement{}) -> [docsh_internal:item()].
+-spec types(#xmlElement{}) -> [any()].
 types(#xmlElement{name = module} = M) ->
   content(typedecls, [], fun types/1, M);
 types(#xmlElement{name = typedecls, content = Content}) ->
   Types = [ type(Type) || #xmlElement{name = typedecl} = Type <- Content ],
   lists:sort(fun sort_by_name_arity/2, Types).
 
--spec type(#xmlElement{}) -> docsh_internal:item().
+-spec type(#xmlElement{}) -> [any()].
 type(#xmlElement{name = typedecl} = Type) ->
   [ {kind        , 'type'}
   , {name        , type_name(Type)}
