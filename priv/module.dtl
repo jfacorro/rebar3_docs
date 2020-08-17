@@ -60,7 +60,7 @@
             <h2 class="type">
               <span class="signature"> {{ type.name }}()</span>
               {% if type.description != "none" %}
-              <div class="definition">{{ type.description|safe }}</div>
+              <pre class="definition">{{ type.description|safe }}</pre>
               {% endif %}
             </h2>
           </a>
@@ -79,7 +79,7 @@
                 {{ function.name }}({% for arg in function.args %}{{ arg.name }}{% if not forloop.last %}, {% endif %}{% endfor %})
               </span>
               {% if function.spec != "none" %}
-              <div class="definition">{{ function.spec }}</div>
+              <pre class="definition">{{ function.spec }}</pre>
               {% endif %}
             </h2>
           </a>
