@@ -167,7 +167,7 @@ a:hover {
 }
 
 #toggle-nav-button {
-    position: absolute;
+    position: fixed;
     font-size: 20px;
     line-height: 20px;
     cursor: pointer;
@@ -192,7 +192,6 @@ a:hover {
     transition: margin-left .5s;
     padding: 0px;
     margin: 0px;
-    overflow: scroll;
 }
 
 #main.nav {
