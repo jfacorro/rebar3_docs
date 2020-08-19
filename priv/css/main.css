@@ -184,7 +184,7 @@ a:hover {
 #toggle-nav-button.no-nav {
     left: 10px;
     top: 10px;
-    transition: left 0.3s, top 0.1s 0.3s;
+    transition: left 0.3s, top 0.2s 0.3s;
 }
 
 #main {
