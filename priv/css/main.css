@@ -75,12 +75,12 @@ a:hover {
 }
 
 #sidenav form {
-    padding: 20px;
+    padding: 13px 15px;
     padding-bottom: 0px;
 }
 
 #sidenav-title {
-    margin: 23px 0 10px 30px;
+    margin: 21px 0 10px 30px;
 }
 
 #sidenav-title h1 {
@@ -176,8 +176,8 @@ a:hover {
 }
 
 #toggle-nav-button.nav {
-    left: 255px;
-    top: 24px;
+    left: 260px;
+    top: 18px;
     transition: 0.3s;
 }
 
