@@ -3,7 +3,6 @@
   <body>
     {{ sidenav|safe }}
     <div id="main" class="nav">
-      <span id="show-nav-button" class="nav" onclick="openNav()">&#9776;</span>
       <div id="content">
         <section id="top">
           <h1>{{ title }}</h1>

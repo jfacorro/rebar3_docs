@@ -1,13 +1,12 @@
-function openNav() {
-  changeClass("nav");
-}
+var navigation = true;
 
-function closeNav() {
-  changeClass("no-nav");
+function toggleNav() {
+  changeClass(navigation? "no-nav" : "nav");
+  navigation = !navigation;
 }
 
 function changeClass(className) {
-  let ids = ["sidenav", "main", "show-nav-button"];
+  let ids = ["sidenav", "main", "toggle-nav-button"];
   for(id of ids) {
     document.getElementById(id).className = className;
   }

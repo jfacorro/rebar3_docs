@@ -1,10 +1,10 @@
+<span id="toggle-nav-button" class="nav" onclick="toggleNav()">&#9776;</span>
 <div id="sidenav" class="nav">
   <form id="search">
      <div class="autocomplete">
        <input id="search-query" type="text" autocomplete="off" />
      </div>
   </form>
-  <span id="hide-nav-button" onclick="closeNav()">&#9776;</span>
   <div id="sidenav-title">
     <h1><a href="index.html">{{ application }}</a></h1>
     <h2>{{ version }}</h2>

@@ -75,7 +75,8 @@ a:hover {
 }
 
 #sidenav form {
-    padding: 10px 10px 0px 10px;
+    padding: 20px;
+    padding-bottom: 0px;
 }
 
 #sidenav-title {
@@ -128,7 +129,7 @@ a:hover {
     height: 30px;
     border: none;
     border-radius: 3px;
-    padding: 0px 30px 0px 15px;
+    padding: 0px 30px 0px 10px;
     font-size: 1em;
     width: 100%;
 }
@@ -165,38 +166,33 @@ a:hover {
     background-color: #ccc;
 }
 
-#hide-nav-button, #show-nav-button {
+#toggle-nav-button {
     position: absolute;
-    top: 14px;
     font-size: 20px;
     line-height: 20px;
     cursor: pointer;
-}
-
-#hide-nav-button {
-    right: 15px;
     color: #333;
+    z-index: 99;
 }
 
-#show-nav-button {
-    left: 15px;
-    transition: visibility 0s, opacity 0.5s linear;
+#toggle-nav-button.nav {
+    left: 255px;
+    top: 24px;
+    transition: 0.3s;
 }
 
-#show-nav-button.nav {
-    visibility: hidden;
-    opacity: 0;
-}
-
-#show-nav-button.no-nav {
-    visibility: visible;
-    opacity: 1;
+#toggle-nav-button.no-nav {
+    left: 10px;
+    top: 10px;
+    transition: left 0.3s, top 0.1s 0.3s;
 }
 
 #main {
+    height: 100%;
     transition: margin-left .5s;
     padding: 0px;
     margin: 0px;
+    overflow: scroll;
 }
 
 #main.nav {
