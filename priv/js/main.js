@@ -1,22 +1,22 @@
 var navigation = true;
 
-function toggleNav() {
+var toggleNav = function() {
   changeClass(navigation? "no-nav" : "nav");
   navigation = !navigation;
-}
+};
 
-function changeClass(className) {
+var changeClass = function(className) {
   let ids = ["sidenav", "main", "toggle-nav-button"];
   for(id of ids) {
     document.getElementById(id).className = className;
   }
-}
+};
 
-function isMatch(x, y) {
+var isMatch = function(x, y) {
   return x.toLowerCase().indexOf(y.toLowerCase()) != -1;
-}
+};
 
-function autocomplete(input) {
+var autocomplete = function(input) {
   const MAX_RESULT_COUNT = 5;
   const DOM_KEY_DOWN = 40;
   const DOM_KEY_UP = 38;
@@ -131,11 +131,11 @@ function autocomplete(input) {
 
   input.addEventListener('input', run);
   input.addEventListener('keydown', navigate);
-}
+};
 
-function ready(f) {
+var ready = function(f) {
   document.addEventListener('DOMContentLoaded', f);
-}
+};
 
 ready(function(e) {
   var search = document.getElementById('search-query');
