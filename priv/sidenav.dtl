@@ -9,6 +9,13 @@
     <h1><a href="index.html">{{ application }}</a></h1>
     <h2>{{ version }}</h2>
   </div>
+  <ul id="sidenav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="api_reference.html">API Reference</a></li>
+    {% if modules|length > 0 %}
+    <li>Modules</li>
+    {% endif %}
+  </ul>
   {% if modules|length > 0 %}
   <ul id="sidenav-modules">
     {% for m in modules %}

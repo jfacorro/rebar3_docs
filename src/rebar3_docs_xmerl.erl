@@ -36,6 +36,7 @@
 -spec '#root#'(any(), any(), any(), any()) -> [any()].
 '#root#'([#xmlElement{name = module} = Module], _, _, _) ->
   [ {name, name(Module)},
+    {synopsis, synopsis(Module)},
     {description, description(Module)},
     {functions, functions(Module)},
     {types, types(Module)}
