@@ -2,7 +2,7 @@
 <div id="sidenav" class="nav">
   <form id="search">
      <div class="autocomplete">
-       <input id="search-query" type="text" autocomplete="off" />
+       <input id="search-query" type="text" autocomplete="off" placeholder="Search..." />
      </div>
   </form>
   <div id="sidenav-title">
