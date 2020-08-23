@@ -152,14 +152,13 @@ var menu = function() {
   var filename = url.substring(url.lastIndexOf('/') + 1);
   var ref = window.location.hash.substring(1);
 
-  console.log(filename + " - " + ref);
-
   var all = Array.from(links.getElementsByTagName("li"))
       .concat(Array.from(modules.getElementsByTagName("li")));
 
   var currentItem = findCurrentItem(all, filename);
 
   currentItem.classList.add("selected");
+  modules.scrollTop = currentItem.offsetTop - modules.offsetTop - 40;
 };
 
 var ready = function(f) {
