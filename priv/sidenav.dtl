@@ -12,11 +12,9 @@
   <ul id="sidenav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="api_reference.html">API Reference</a></li>
-    {% if modules|length > 0 %}
-    <li>Modules</li>
-    {% endif %}
   </ul>
   {% if modules|length > 0 %}
+  <h2 class="section">Modules</h2>
   <ul id="sidenav-modules">
     {% for m in modules %}
     <li><a href="{{ m.name }}.html">{{ m.name }}</a></li>

@@ -58,14 +58,21 @@ a:hover {
     margin: 21px 0 10px 0px;
 }
 
-#sidenav-title, #sidenav ul {
+#sidenav-title {
+    padding-left: 45px;
+}
+
+#sidenav ul {
     padding-left: 30px;
 
 }
 
 #sidenav ul li {
+    padding-left: 15px;
     list-style-type: none;
     line-height: 27px;
+    border-left: 2px solid transparent;
+    transition: border 0.5s;
 }
 
 #sidenav a {
@@ -74,9 +81,16 @@ a:hover {
     transition: 0.3s;
 }
 
-#sidenav a:hover {
+#sidenav h2 {
+    margin: 0px 0px 15px 45px;
+    font-size: 1.2em;
+}
+
+#sidenav ul li:hover, #sidenav ul li.selected {
     text-shadow: 0 0 3px #fff;
     color: #fff;
+    border-left: 2px solid white;
+    transition: border 1s;
 }
 
 #sidenav form {

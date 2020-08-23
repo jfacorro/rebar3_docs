@@ -133,6 +133,35 @@ var autocomplete = function(input) {
   input.addEventListener('keydown', navigate);
 };
 
+
+var menu = function() {
+  var findCurrentItem = function(items, filename) {
+    for(item of items) {
+      var a = item.getElementsByTagName("a");
+      if(a[0].attributes.href.value === filename) {
+        return item;
+      }
+    }
+    return null;
+  };
+
+  var links = document.getElementById('sidenav-links');
+  var modules = document.getElementById('sidenav-modules');
+
+  var url = window.location.pathname;
+  var filename = url.substring(url.lastIndexOf('/') + 1);
+  var ref = window.location.hash.substring(1);
+
+  console.log(filename + " - " + ref);
+
+  var all = Array.from(links.getElementsByTagName("li"))
+      .concat(Array.from(modules.getElementsByTagName("li")));
+
+  var currentItem = findCurrentItem(all, filename);
+
+  currentItem.classList.add("selected");
+};
+
 var ready = function(f) {
   document.addEventListener('DOMContentLoaded', f);
 };
@@ -140,4 +169,5 @@ var ready = function(f) {
 ready(function(e) {
   var search = document.getElementById('search-query');
   autocomplete(search);
+  menu();
 });
