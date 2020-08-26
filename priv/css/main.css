@@ -249,6 +249,7 @@ code {
     max-width: 829px;
     margin: 0 auto;
     padding: 3px 60px;
+    padding-bottom: 60px;
 }
 
 #content p a {

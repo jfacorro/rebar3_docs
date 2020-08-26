@@ -51,7 +51,12 @@ do(State) ->
 
   Files = rebar_utils:find_files("src", ".erl$"),
   Modules1 = [parse_doc(Path, Opts) || Path <- Files],
-  Modules2 = [M || M <- Modules1, proplists:get_value(name, M) =/= undefined],
+  Modules2 = [M || M <- Modules1,
+                   proplists:get_value(name, M) =/= undefined,
+                   not proplists:get_value(private, M),
+                   not proplists:get_value(hidden, M)
+             ],
+
   Modules  = lists:sort(fun sort_by_name/2, Modules2),
   Sidenav = generate(sidenav_dtl, [{modules, Modules}], Opts),
 

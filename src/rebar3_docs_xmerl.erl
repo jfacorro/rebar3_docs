@@ -1,32 +1,20 @@
 -module(rebar3_docs_xmerl).
 
-%% xmerl:simple_export/2 API
-
 -export([ '#root#'/4
         , '#element#'/5
         , '#text#'/1
         , '#xml-inheritance#'/0
         ]).
 
--export_type([xml_element_content/0]).
-
 -include_lib("xmerl/include/xmerl.hrl").
-
-%% @type xml_element_content(). `#xmlElement.content' as defined by `xmerl.hrl'.
--type xml_element_content() :: [ #xmlElement{}
-                               | #xmlText{}
-                               | #xmlPI{}
-                               | #xmlComment{}
-                               | #xmlDecl{}
-                               ].
 
 -define(il2b(IOList), unicode:characters_to_binary(IOList)).
 -define(l2i(L), list_to_integer(L)).
 -define(l2ea(L), list_to_existing_atom(L)).
 
-%%
-%%' xmerl:simple_export/2 API
-%%
+%%------------------------------------------------------------------------------
+%% xmerl:simple_export/2 API
+%%------------------------------------------------------------------------------
 
 -spec '#xml-inheritance#'() -> list().
 '#xml-inheritance#'() -> [].
@@ -39,7 +27,9 @@
     {synopsis, synopsis(Module)},
     {description, description(Module)},
     {functions, functions(Module)},
-    {types, types(Module)}
+    {types, types(Module)},
+    {private, is_private(Module)},
+    {hidden, is_hidden(Module)}
   ].
 
 -spec '#element#'(any(), any(), any(), any(), any()) -> any().
@@ -49,12 +39,18 @@
 -spec '#text#'(any()) -> any().
 '#text#'(Text) -> ?il2b(Text).
 
-%%.
-%%' xmerl:simple_export/2 helpers
-%%
+%%------------------------------------------------------------------------------
+%% Helper functions
+%%------------------------------------------------------------------------------
 
 name(#xmlElement{attributes = Attrs}) ->
   ?l2ea(find_attribute(name, Attrs)).
+
+is_private(#xmlElement{attributes = Attrs}) ->
+  list_to_boolean(find_attribute(private, Attrs, "no")).
+
+is_hidden(#xmlElement{attributes = Attrs}) ->
+  list_to_boolean(find_attribute(hidden, Attrs, "no")).
 
 -spec functions(#xmlElement{}) -> [any()].
 functions(#xmlElement{name = module} = M) ->
@@ -242,6 +238,12 @@ find_attribute(Attr, Attrs) ->
   case xmerl_lib:find_attribute(Attr, Attrs) of
     false -> {error, no_attr, Attr};
     {value, Value} -> Value
+  end.
+
+find_attribute(Attr, Attrs, Default) ->
+  case xmerl_lib:find_attribute(Attr, Attrs) of
+    {value, Value} -> Value;
+    _ -> Default
   end.
 
 find_elements([], Elements) ->
