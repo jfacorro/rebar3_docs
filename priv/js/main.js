@@ -133,7 +133,6 @@ var autocomplete = function(input) {
   input.addEventListener('keydown', navigate);
 };
 
-
 var menu = function() {
   var findCurrentItem = function(items, filename) {
     for(item of items) {
@@ -143,6 +142,51 @@ var menu = function() {
       }
     }
     return null;
+  };
+
+  var addChildren = function(item, children) {
+    var ul = document.createElement("ul");
+    for(child of children) {
+      var li = document.createElement("li");
+      li.innerHTML = "<div class='label'><a href='" + child.href + "'>" + child.title + "</a></div>";
+      if(typeof(child.children) != "undefined") {
+        addChildren(li, child.children);
+      }
+      ul.appendChild(li);
+    }
+    item.appendChild(ul);
+  };
+
+  var expandModuleItem = function(item, filename, ref) {
+    var module = filename.substring(0, filename.lastIndexOf("."));
+    var node = navTree[module];
+    var children =
+        [ { "href": filename + "#top", "title": "Top"},
+          { "href": filename + "#summary", "title": "Summary"}
+        ];
+    if(node.types.length > 0) {
+      var types = {
+        "href": filename + "#types",
+        "title": "Types",
+        "children": []
+      };
+      for(t of node.types) {
+        types.children.push({"href": filename + "#" + t, "title": t});
+      }
+      children.push(types);
+    }
+    if(node.functions.length > 0) {
+      var functions = {
+        "href": filename + "#functions",
+        "title": "Functions",
+        "children": []
+      };
+      for(f of node.functions) {
+        functions.children.push({"href": filename + "#" + f, "title": f});
+      }
+      children.push(functions);
+    }
+    addChildren(item, children);
   };
 
   var links = document.getElementById('sidenav-links');
@@ -156,9 +200,12 @@ var menu = function() {
       .concat(Array.from(modules.getElementsByTagName("li")));
 
   var currentItem = findCurrentItem(all, filename);
-
   currentItem.classList.add("selected");
-  modules.scrollTop = currentItem.offsetTop - modules.offsetTop - 40;
+  var isModule = currentItem.parentNode === modules;
+  if(isModule) {
+    modules.scrollTop = currentItem.offsetTop - modules.offsetTop - 40;
+    expandModuleItem(currentItem, filename, ref);
+  }
 };
 
 var ready = function(f) {

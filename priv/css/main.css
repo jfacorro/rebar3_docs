@@ -63,15 +63,18 @@ a:hover {
 }
 
 #sidenav ul {
-    padding-left: 30px;
+    padding-left: 25px;
 
 }
 
 #sidenav ul li {
-    padding-left: 15px;
     list-style-type: none;
+}
+
+#sidenav ul li div {
+    border-left: 3px solid transparent;
     line-height: 27px;
-    border-left: 2px solid transparent;
+    padding-left: 17px;
     transition: border 0.5s;
 }
 
@@ -86,11 +89,20 @@ a:hover {
     font-size: 1.2em;
 }
 
-#sidenav ul li:hover, #sidenav ul li.selected {
+#sidenav > ul > li:hover > div, #sidenav > ul > li.selected > div {
     text-shadow: 0 0 3px #fff;
     color: #fff;
-    border-left: 2px solid white;
+    border-left: 3px solid white;
     transition: border 1s;
+}
+
+#sidenav ul li.selected ul {
+    padding-left: 10px;
+    margin: 5px 0px 10px 0px;
+}
+
+#sidenav ul li.selected ul li {
+    padding-left: 10px;
 }
 
 #sidenav form {
@@ -115,7 +127,6 @@ a:hover {
 
 #sidenav-modules {
     margin: 0px;
-    margin-left: 20px;
     overflow-x: hidden;
     overflow-y: scroll;
     flex: 1 1 0.0%;
@@ -124,6 +135,12 @@ a:hover {
 
 #sidenav-modules a {
     padding: 0px;
+}
+
+#sidenav-modules ul li ul li div {
+    border-left: 1px solid #FFF;
+    line-height: 20px;
+    margin-left: 5px;
 }
 
 #search a {
@@ -249,16 +266,16 @@ a:hover {
     margin: 40px 0px 20px 0px;
 }
 
-#summary ul {
+#summary-section ul {
     padding: 0px;
 }
 
-#summary ul li {
+#summary-section ul li {
     list-style-type: none;
     margin: 10px 0px;
 }
 
-#summary .synopsis {
+#summary-section .synopsis {
     color: #666;
     margin-top: 10px;
     padding-left: 20px;
@@ -280,7 +297,7 @@ a:hover {
     color: #666;
 }
 
-#functions h2, #types h2 {
+#functions-section h2, #types-section h2 {
     background: #EEE;
     padding: 10px;
     border-left: #C33F35 3px solid;

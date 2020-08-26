@@ -4,7 +4,7 @@
     {{ sidenav|safe }}
     <div id="main" class="nav">
       <div id="content">
-        <section id="top">
+        <section id="top-section">
           <h1>{{ title }}</h1>
         </section>
         {{ content|safe }}

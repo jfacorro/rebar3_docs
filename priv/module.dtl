@@ -4,20 +4,20 @@
     {{ sidenav|safe }}
     <div id="main" class="nav">
       <div id="content">
-        <section id="top">
-          <h1>{{ module.name }}</h1>
+        <section id="top-section">
+          <h1><a id="top">{{ module.name }}</a></h1>
           {% if module.description != "none" %}
           <p>{{ module.description|safe }}</p>
           {% endif %}
         </section>
         {% if module.functions|length > 0 or module.types|length > 0 %}
         <!------- Summary ------->
-        <section id="summary">
-          <h1>Summary</h1>
+        <section id="summary-section">
+          <h1><a id="summary">Summary</a></h1>
 
           {% if module.types|length > 0 %}
           <!------- Types summary ------->
-          <h2>Types</h2>
+          <h2><a id="types">Types</a></h2>
           <ul>
             {% for type in module.types %}
             <li>
@@ -31,7 +31,7 @@
 
           {% if module.functions|length > 0 %}
           <!------- Functions summary ------->
-          <h2>Functions</h2>
+          <h2><a id="functions">Functions</a></h2>
           <ul>
             {% for function in module.functions %}
             <li>
@@ -52,7 +52,7 @@
 
         {% if module.types|length > 0 %}
         <!------- Types details ------->
-        <section id="types">
+        <section id="types-section">
           <h1>Types</h1>
           {% for type in module.types %}
           <a id="{{ type.name }}/{{ type.arity }}" href="#{{ type.name }}/{{ type.arity }}">
@@ -69,7 +69,7 @@
 
         {% if module.functions|length > 0 %}
         <!------- Functions details ------->
-        <section id="functions">
+        <section id="functions-section">
           <h1>Functions</h1>
           {% for function in module.functions %}
           <a id="{{ function.name }}/{{ function.arity }}" href="#{{ function.name }}/{{ function.arity }}">
