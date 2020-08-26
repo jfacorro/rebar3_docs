@@ -6,6 +6,7 @@
 -define(DEPS, [lock]).
 
 -define(INCLUDE, "include").
+-define(DEFAULT_DIR, "doc").
 
 -type options() :: #{ application := string()
                     , filename => string()
@@ -85,7 +86,7 @@ format_error(Reason) ->
 -spec output_dir(rebar_state:t()) -> string().
 output_dir(State) ->
   {Args, _} = rebar_state:command_parsed_args(State),
-  proplists:get_value(out, Args, "docs").
+  proplists:get_value(out, Args, ?DEFAULT_DIR).
 
 -spec include_dirs(rebar_app_info:t()) -> [string()].
 include_dirs(AppInfo) ->

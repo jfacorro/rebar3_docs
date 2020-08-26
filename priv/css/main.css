@@ -27,6 +27,11 @@ a:hover {
     text-decoration: none;
 }
 
+code {
+    font-family: Menlo, Courier, monospace;
+    font-weight: bold;
+}
+
 #sidenav {
     height: 100%;
     position: fixed;
