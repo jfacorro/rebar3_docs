@@ -94,6 +94,11 @@ code {
     font-size: 1.2em;
 }
 
+#sidenav h3 {
+    margin: 20px;
+    font-size: 1.1em;
+}
+
 #sidenav > ul > li:hover > div, #sidenav > ul > li.selected > div {
     text-shadow: 0 0 3px #fff;
     color: #fff;

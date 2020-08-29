@@ -137,7 +137,7 @@ var menu = function() {
   var findCurrentItem = function(items, filename) {
     for(item of items) {
       var a = item.getElementsByTagName("a");
-      if(a[0].attributes.href.value === filename) {
+      if(a.length > 0 &&  a[0].attributes.href.value === filename) {
         return item;
       }
     }
