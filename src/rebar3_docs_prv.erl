@@ -147,8 +147,10 @@ parse_doc(Path, #{include_dirs := IncludeDirs}) ->
     Source = edoc:read_source(Path, Opts),
     Docs = xmerl:export_simple([Edoc], rebar3_docs_xmerl),
     specs_and_types(Docs, Source)
-  catch _:_ ->
-      rebar_api:error("Failed to process docs for ~s", [Path]),
+  catch _:Reason:Stacktrace ->
+      rebar_api:error("Failed to process docs for ~s. Error: ~p~n~p~n"
+                     , [Path, Reason, Stacktrace]
+                     ),
       [{functions, []}, {types, []}]
   end.
 
