@@ -1,6 +1,22 @@
 # Changelog
 
-## [0.1.0](https://github.com/jfacorro/rebar3_docs/tree/0.1.0)
+## [0.2.0](https://github.com/jfacorro/rebar3_docs/tree/0.2.0)
+
+[Full Changelog](https://github.com/jfacorro/rebar3_docs/compare/0.1.0...0.2.0)
+
+**Closed issues:**
+
+- Show "Not found" result item in search when nothing is found [\#8](https://github.com/jfacorro/rebar3_docs/issues/8)
+- Process edoc's @equiv information [\#7](https://github.com/jfacorro/rebar3_docs/issues/7)
+- Ignore modules marked with @private [\#5](https://github.com/jfacorro/rebar3_docs/issues/5)
+- Expand module item in navigation with the list of types or functions [\#4](https://github.com/jfacorro/rebar3_docs/issues/4)
+
+**Merged pull requests:**
+
+- \[\#7\] Process @equiv [\#9](https://github.com/jfacorro/rebar3_docs/pull/9) ([jfacorro](https://github.com/jfacorro))
+- Categories [\#6](https://github.com/jfacorro/rebar3_docs/pull/6) ([jfacorro](https://github.com/jfacorro))
+
+## [0.1.0](https://github.com/jfacorro/rebar3_docs/tree/0.1.0) (2020-08-17)
 
 [Full Changelog](https://github.com/jfacorro/rebar3_docs/compare/877aee8637eed48994fa1576d2f09f378651fb8e...0.1.0)
 
