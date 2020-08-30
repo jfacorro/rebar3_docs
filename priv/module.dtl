@@ -43,6 +43,9 @@
               {% if function.synopsis != "none" %}
               <div class="synopsis">{{ function.synopsis|safe }}</div>
               {% endif %}
+              {% if function.equiv != "none" %}
+              <div class="synopsis">Equivalent to <code>{{ function.equiv|safe }}</code>.</div>
+              {% endif %}
             </li>
             {% endfor %}
           </ul>
@@ -82,6 +85,9 @@
               {% endif %}
             </h2>
           </a>
+          {% if function.equiv != "none" %}
+          <p>Equivalent to <code>{{ function.equiv|safe }}</code>.</p>
+          {% endif %}
           {% if function.description != "none" %}
           <p>{{ function.description|safe }}</p>
           {% endif %}
