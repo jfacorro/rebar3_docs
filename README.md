@@ -24,7 +24,31 @@ Then just call your plugin directly in an existing application:
     ===> Compiling rebar3_docs
     <Plugin Output>
 
-Useful links:
+Options
+--------
+
+This plugin provides some configuration options by adding a `{docs,
+Options}` entry to the project's `rebar.config`.
+
+Available options:
+
+- `categories`: list of category name with the modules that belong to
+  them. This information is used to create sections in the navigation
+  menu. When a module is not included in any category it is added at
+  the beginning of the modules list in the navigation menu.
+
+  ```
+  { categories
+  , [ {"Name1", [module1, module2]}
+    , {"Name2", [module3]}
+    ]
+  }
+  ```
+
+--------
+
+Useful links
+----------------
 
 - [docsh - Documentationi in the Erlang shell](https://github.com/erszcz/docsh)
 - [HTML+JS Sidenav How To](https://www.w3schools.com/howto/howto_js_sidenav.asp)

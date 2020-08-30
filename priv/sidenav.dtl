@@ -21,14 +21,18 @@
       </div>
     </li>
   </ul>
-  {% if modules|length > 0 %}
+  {% if items|length > 0 %}
   <h2 class="section">Modules</h2>
   <ul id="sidenav-modules">
-    {% for m in modules %}
+    {% for item in items %}
     <li>
+      {% if item.category %}
+      <h3>{{ item.name }}</h3>
+      {% else %}
       <div class="label">
-        <a href="{{ m.name }}.html">{{ m.name }}</a>
+        <a href="{{ item.name }}.html">{{ item.name }}</a>
       </div>
+      {% endif %}
     </li>
     {% endfor %}
   </ul>

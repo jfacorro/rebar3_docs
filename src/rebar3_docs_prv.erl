@@ -58,7 +58,8 @@ do(State) ->
              ],
 
   Modules  = lists:sort(fun sort_by_name/2, Modules2),
-  Sidenav = generate(sidenav_dtl, [{modules, Modules}], Opts),
+  SidenavItems = process_categories(AppInfo, Modules),
+  Sidenav = generate(sidenav_dtl, [{items, SidenavItems}], Opts),
 
   [ generate(module_dtl, [{module, M}, {sidenav, Sidenav}], Opts)
     || M <- Modules
@@ -108,6 +109,35 @@ include_dirs(AppInfo) ->
 -spec sort_by_name(any(), any()) -> boolean().
 sort_by_name(X, Y) ->
   proplists:get_value(name, X) < proplists:get_value(name, Y).
+
+-spec process_categories(rebar_app_info:t(), [list()]) -> [list()].
+process_categories(AppInfo, Modules) ->
+  AppOpts = rebar_app_info:opts(AppInfo),
+  DocsOpts = rebar_opts:get(AppOpts, docs, []),
+  case proplists:get_value(categories, DocsOpts)  of
+    undefined -> Modules;
+    Categories ->
+      {Leftover, Items0} =
+        lists:foldl(fun process_category/2, {Modules, []}, Categories),
+      Items1 = lists:reverse(Items0),
+      lists:append([Leftover | Items1])
+  end.
+
+-spec process_category( {string(), [atom()]}
+                      , {Modules:: list(), Items :: list()}
+                      ) ->
+  {list(), list()}.
+process_category({_CategoryName, []}, {Modules, Items}) ->
+  {Modules, Items};
+process_category({CategoryName, ModulesNames}, {Modules0, Items0}) ->
+  Category = [{name, CategoryName}, {category, true}],
+  Pred = fun(X) ->
+             Name = proplists:get_value(name, X),
+             lists:member(Name, ModulesNames)
+         end,
+  {Children, Modules} = lists:partition(Pred, Modules0),
+  Items = [[Category | Children] | Items0],
+  {Modules, Items}.
 
 -spec parse_doc(string(), options()) -> [any()].
 parse_doc(Path, #{include_dirs := IncludeDirs}) ->
