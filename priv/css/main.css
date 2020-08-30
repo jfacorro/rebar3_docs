@@ -214,6 +214,10 @@ code {
     background-color: #ccc;
 }
 
+#search .autocomplete-items div.no-results {
+    color: #333;
+}
+
 #toggle-nav-button {
     position: fixed;
     font-size: 20px;

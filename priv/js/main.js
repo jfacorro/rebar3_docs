@@ -76,6 +76,13 @@ var autocomplete = function(input) {
       itemLink.appendChild(itemDiv);
       div.appendChild(itemLink);
     }
+    if (result.length === 0) {
+      var itemDiv = document.createElement("div");
+      itemDiv.setAttribute("class", "no-results");
+      var label = "No results found for \""+ query + "\"";
+      itemDiv.innerHTML = highlightQuery(label, query);
+      div.appendChild(itemDiv);
+    }
   };
 
   var deleteResultList = function() {
@@ -100,7 +107,7 @@ var autocomplete = function(input) {
     return true;
   };
 
-  var navigate = function(e) {
+  var navigateResults = function(e) {
     var items = document.getElementById("autocomplete-items");
     if (items) {
       items = items.getElementsByClassName("autocomplete-item");
@@ -130,7 +137,7 @@ var autocomplete = function(input) {
   };
 
   input.addEventListener('input', run);
-  input.addEventListener('keydown', navigate);
+  input.addEventListener('keydown', navigateResults);
 };
 
 var menu = function() {
