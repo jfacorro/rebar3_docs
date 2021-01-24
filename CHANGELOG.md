@@ -1,6 +1,18 @@
 # Changelog
 
-## [0.2.0](https://github.com/jfacorro/rebar3_docs/tree/0.2.0)
+## [0.2.1](https://github.com/jfacorro/rebar3_docs/tree/0.2.1)
+
+[Full Changelog](https://github.com/jfacorro/rebar3_docs/compare/0.2.0...0.2.1)
+
+**Closed issues:**
+
+- Support for older OTP releases [\#10](https://github.com/jfacorro/rebar3_docs/issues/10)
+
+**Merged pull requests:**
+
+- \[\#10\] Support older OTP [\#11](https://github.com/jfacorro/rebar3_docs/pull/11) ([jfacorro](https://github.com/jfacorro))
+
+## [0.2.0](https://github.com/jfacorro/rebar3_docs/tree/0.2.0) (2020-08-30)
 
 [Full Changelog](https://github.com/jfacorro/rebar3_docs/compare/0.1.0...0.2.0)
 
