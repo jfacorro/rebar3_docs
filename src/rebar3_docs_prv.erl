@@ -8,6 +8,12 @@
 -define(INCLUDE, "include").
 -define(DEFAULT_DIR, "doc").
 
+-ifdef(FUN_STACKTRACE).
+-define(WITH_STACKTRACE(T, R, S), T:R -> S = erlang:get_stacktrace(),).
+-else.
+-define(WITH_STACKTRACE(T, R, S), T:R:S ->).
+-endif.
+
 -type options() :: #{ application := string()
                     , filename => string()
                     , include_dirs := [file:filename()]
@@ -147,7 +153,7 @@ parse_doc(Path, #{include_dirs := IncludeDirs}) ->
     Source = edoc:read_source(Path, Opts),
     Docs = xmerl:export_simple([Edoc], rebar3_docs_xmerl),
     specs_and_types(Docs, Source)
-  catch _:Reason:Stacktrace ->
+  catch ?WITH_STACKTRACE(_, Reason, Stacktrace)
       rebar_api:error("Failed to process docs for ~s. Error: ~p~n~p~n"
                      , [Path, Reason, Stacktrace]
                      ),
